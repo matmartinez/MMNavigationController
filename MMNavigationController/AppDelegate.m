@@ -7,17 +7,48 @@
 //
 
 #import "AppDelegate.h"
+#import "MMNavigationController.h"
+#import "ViewController.h"
 
-@interface AppDelegate ()
+@interface AppDelegate () <MMNavigationControllerDelegate>
 
 @end
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    NSArray *colors = @[ [UIColor colorWithRed:0.501 green:0.447 blue:0.928 alpha:1],
+                         [UIColor colorWithRed:0 green:0.81 blue:0.988 alpha:1],
+                         [UIColor colorWithRed:1 green:0.809 blue:0 alpha:1],
+                         [UIColor colorWithRed:0 green:0.854 blue:0.352 alpha:1] ];
+    
+    NSMutableArray *viewControllers = [NSMutableArray arrayWithCapacity:colors.count];
+    for (UIColor *color in colors) {
+        ViewController *vc = [ViewController new];
+        vc.color = color;
+        
+        [viewControllers addObject:vc];
+    }
+    
+    MMNavigationController *navigationController = [[MMNavigationController alloc] initWithViewControllers:viewControllers];
+    navigationController.delegate = self;
+    
+    UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    window.rootViewController = navigationController;
+    
+    [window makeKeyAndVisible];
+    
+    self.window = window;
+    
     return YES;
+}
+
+- (MMViewControllerMetrics)navigationController:(MMNavigationController *)nc metricsForViewController:(UIViewController *)viewController
+{
+    if (nc.viewControllers.lastObject == viewController) {
+        return MMViewControllerMetricsLarge;
+    }
+    return MMViewControllerMetricsDefault;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
