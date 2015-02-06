@@ -11,6 +11,10 @@
 @interface MMNavigationHeaderView () {
     struct {
         unsigned int usingMultilineHeading : 1;
+        unsigned int showsRightButton : 1;
+        unsigned int showsLeftButton : 1;
+        unsigned int showsBackButton : 1;
+        unsigned int usingRegularBackButton : 1;
     } _configurationOptions;
 }
 
@@ -42,6 +46,7 @@
         // Background view.
         UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
         backgroundView.backgroundColor = [UIColor whiteColor];
+        backgroundView.userInteractionEnabled = NO;
         
         _backgroundView = backgroundView;
         
@@ -50,6 +55,7 @@
         // Separator view.
         UIView *separatorView = [[UIView alloc] initWithFrame:CGRectZero];
         separatorView.backgroundColor = _separatorColor;
+        separatorView.userInteractionEnabled = NO;
         
         _separatorView = separatorView;
         
@@ -234,18 +240,17 @@
     };
     
     CGRect subtitleLabelRect = (CGRect){
-        .origin.y = CGRectGetMaxY(titleLabelRect),
+        .origin.y = ceilf(CGRectGetMaxY(titleLabelRect)),
         .size.width = MIN(sSize.width, CGRectGetWidth(titleAlignmentRect)),
         .size.height = sSize.height
     };
     
     if (((NSInteger)(CGRectGetWidth(bounds) - widthNeededToFitTitle) / 2.0f) > CGRectGetMinX(titleAlignmentRect)) {
-        titleLabelRect.origin.x = (NSInteger)(CGRectGetWidth(bounds) - CGRectGetWidth(titleLabelRect)) / 2.0f;
-        subtitleLabelRect.origin.x = (NSInteger)(CGRectGetWidth(bounds) - CGRectGetWidth(subtitleLabelRect)) / 2.0f;
+        titleLabelRect.origin.x = ceilf((CGRectGetWidth(bounds) - CGRectGetWidth(titleLabelRect)) / 2.0f);
+        subtitleLabelRect.origin.x = ceilf((CGRectGetWidth(bounds) - CGRectGetWidth(subtitleLabelRect)) / 2.0f);
     } else {
-        
-        titleLabelRect.origin.x = CGRectGetMinX(titleAlignmentRect) + ((widthNeededToFitTitle - tSize.width) / 2.0f);
-        subtitleLabelRect.origin.x = CGRectGetMinX(titleAlignmentRect) + ((widthNeededToFitTitle - sSize.width) / 2.0f);
+        titleLabelRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect) + ((widthNeededToFitTitle - tSize.width) / 2.0f));
+        subtitleLabelRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect) + ((widthNeededToFitTitle - sSize.width) / 2.0f));
     }
     
     // Background & separator.
@@ -268,6 +273,12 @@
     _compactBackButton.hidden = useRegularBackButton || !showsBackButton;
     _separatorView.frame = separatorRect;
     _backgroundView.frame = backgroundRect;
+    
+    // Save configuration.
+    _configurationOptions.showsBackButton = showsBackButton;
+    _configurationOptions.showsLeftButton = showsLeftButton;
+    _configurationOptions.showsBackButton = showsBackButton;
+    _configurationOptions.usingRegularBackButton = useRegularBackButton;
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
@@ -327,6 +338,48 @@
 - (BOOL)pagingEnabled
 {
     return [(UIScrollView *)self.navigationController.view isPagingEnabled];
+}
+
+#pragma mark - Poiting inside.
+
+- (BOOL)_pointInside:(CGPoint)point withButton:(UIButton *)button
+{
+    CGRect rect = CGRectZero;
+    rect.origin.x = CGRectGetMinX(button.frame);
+    rect.size.width = CGRectGetWidth(button.frame);
+    rect.size.height = CGRectGetHeight(self.bounds);
+    
+    CGRect targetPointInsideHeaderRect = CGRectInset(rect, -15.0f, -15.0f);
+    
+    return CGRectContainsPoint(targetPointInsideHeaderRect, point);
+}
+
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
+{
+    BOOL pointInside = [super pointInside:point withEvent:event];
+    if (!pointInside) {
+        for (UIView *subview in self.subviews) {
+            UIButton *button = (UIButton *)subview;
+            if ([button isEnabled] && [self _pointInside:point withButton:button]) {
+                return YES;
+            }
+        }
+    }
+    return pointInside;
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    UIView *hitTest = [super hitTest:point withEvent:event];
+    if (!hitTest || hitTest == self || hitTest == self.backgroundView) {
+        for (UIView *subview in self.subviews) {
+            UIButton *button = (UIButton *)subview;
+            if ([button isEnabled] && [self _pointInside:point withButton:button]) {
+                return button;
+            }
+        }
+    }
+    return hitTest;
 }
 
 #pragma mark - Props.
@@ -393,7 +446,7 @@
         
         _backgroundView = backgroundView;
         
-        [self addSubview:backgroundView];
+        [self insertSubview:backgroundView atIndex:0];
         [self setNeedsLayout];
     }
 }

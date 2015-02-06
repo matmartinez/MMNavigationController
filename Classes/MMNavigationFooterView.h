@@ -8,6 +8,20 @@
 
 #import "MMNavigationController.h"
 
+extern const CGFloat MMNavigationFooterFlexibleWidth;
+
 @interface MMNavigationFooterView : MMNavigationSupplementaryView
+
+@property (copy, nonatomic) NSArray *items;
+
+@property (strong, nonatomic) UIColor *separatorColor UI_APPEARANCE_SELECTOR;
+
+@property (strong, nonatomic) UIView *backgroundView;
+
+@end
+
+@interface MMNavigationFooterSpace : NSObject
+
+@property (assign, nonatomic) CGFloat width;
 
 @end
