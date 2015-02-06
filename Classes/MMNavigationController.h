@@ -188,7 +188,7 @@ typedef NS_ENUM(NSUInteger, MMViewControllerMetrics) {
  *  @note Use this method to instance a header view object and append it to your view controller's view hierarchy. Subsecuent calls to this
  *  method will return the previously instantiated header view as long as the view controller is part of the navigation stack.
  */
-- (UIView *)headerViewForViewController:(UIViewController *)viewController;
+- (id)headerViewForViewController:(UIViewController *)viewController;
 
 /**
  *  Returns a footer view located by its view controller.
@@ -200,7 +200,7 @@ typedef NS_ENUM(NSUInteger, MMViewControllerMetrics) {
  *  @note Use this method to instance a footer view object and append it to your view controller's view hierarchy. Subsecuent calls to this
  *  method will return the previously instantiated header view as long as the view controller is part of the navigation stack.
  */
-- (UIView *)footerViewForViewController:(UIViewController *)viewController;
+- (id)footerViewForViewController:(UIViewController *)viewController;
 
 @end
 

@@ -24,7 +24,7 @@
 
 @property (readonly, nonatomic) MMSnapScrollView *scrollView;
 
-@property (strong, nonatomic) NSHashTable *headerFooterViewHashTable;
+@property (strong, nonatomic) NSMutableArray *headerFooterViewArray;
 @property (strong, nonatomic) Class headerViewClass;
 @property (strong, nonatomic) Class footerViewClass;
 
@@ -368,7 +368,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
         [viewController beginAppearanceTransition:YES animated:(scrollView.isDecelerating || scrollView.isTracking)];
         [viewController endAppearanceTransition];
         
-        for (MMNavigationSupplementaryView *view in self.headerFooterViewHashTable.allObjects) {
+        for (MMNavigationSupplementaryView *view in self.headerFooterViewArray) {
             if (view.viewController == viewController) {
                 [view navigationControllerWillDisplayViewController];
                 break;
@@ -394,7 +394,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
             [self.delegate navigationController:self willSnapToViewController:viewController];
         }
         
-        for (MMNavigationSupplementaryView *view in self.headerFooterViewHashTable.allObjects) {
+        for (MMNavigationSupplementaryView *view in self.headerFooterViewArray) {
             [view navigationControllerWillSnapToViewController:viewController];
         }
     }
@@ -423,12 +423,12 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 #pragma mark - Header / footer support.
 
-- (NSHashTable *)headerFooterViewHashTable
+- (NSMutableArray *)headerFooterViewArray
 {
-    if (!_headerFooterViewHashTable) {
-        _headerFooterViewHashTable = [NSHashTable weakObjectsHashTable];
+    if (!_headerFooterViewArray) {
+        _headerFooterViewArray = [NSMutableArray array];
     }
-    return _headerFooterViewHashTable;
+    return _headerFooterViewArray;
 }
 
 - (UIView *)headerViewForViewController:(UIViewController *)viewController
@@ -447,7 +447,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
         return nil;
     }
     
-    for (MMNavigationSupplementaryView *view in self.headerFooterViewHashTable.allObjects) {
+    for (MMNavigationSupplementaryView *view in self.headerFooterViewArray) {
         if (view._viewType == type && view.viewController == viewController) {
             return view;
         }
@@ -465,17 +465,17 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     view.viewController = viewController;
     view._viewType = type;
     
-    [self.headerFooterViewHashTable addObject:view];
+    [self.headerFooterViewArray addObject:view];
     
     return view;
 }
 
 - (void)_removeSupplementaryViewsForViewControllers:(NSArray *)viewControllers
 {
-    for (MMNavigationSupplementaryView *view in self.headerFooterViewHashTable.allObjects) {
+    for (MMNavigationSupplementaryView *view in self.headerFooterViewArray.copy) {
         if ([viewControllers containsObject:view.viewController]) {
             [view setNavigationController:nil];
-            [self.headerFooterViewHashTable removeObject:view];
+            [self.headerFooterViewArray removeObject:view];
         }
     }
 }
