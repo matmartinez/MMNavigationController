@@ -113,6 +113,9 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     [self setAlwaysBounceHorizontal:YES];
     [self setScrollsToTop:NO];
     
+    // Don't delay touches.
+    [self setDelaysContentTouches:NO];
+    
     // Delegate ownership.
     [super setDelegate:self];
 }
