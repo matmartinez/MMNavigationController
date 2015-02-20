@@ -59,7 +59,7 @@ const CGFloat MMNavigationFooterFlexibleWidth = CGFLOAT_MAX;
     };
     
     static const CGFloat pad = 8.0f;
-    static const CGFloat spacing = 16.0f;
+    static const CGFloat spacing = 8.0f;
     
     const CGFloat maximumContentWidth = CGRectGetWidth(bounds) - (pad * 2.0f);
     
