@@ -104,6 +104,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     
     // Adds a snap to page gesture recognizer.
     UITapGestureRecognizer *tapToSnapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_tapToSnapGestureRecognized:)];
+    tapToSnapGestureRecognizer.cancelsTouchesInView = NO;
     
     [self addGestureRecognizer:tapToSnapGestureRecognizer];
     
