@@ -243,7 +243,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     NSArray *popViewControllers = [self.viewControllers subarrayWithRange:range];
     
     // Remove from parent.
-    for (UIViewController *vc in self.viewControllers) {
+    for (UIViewController *vc in popViewControllers) {
         [vc willMoveToParentViewController:nil];
         [vc removeFromParentViewController];
     }
