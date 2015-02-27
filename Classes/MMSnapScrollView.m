@@ -275,7 +275,9 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
         
         rect.origin.x = -offset + contentOffset.x;
         
-        *disappearPercent = percent;
+        if (disappearPercent) {
+            *disappearPercent = percent;
+        }
     }
     
     return rect;
