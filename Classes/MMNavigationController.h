@@ -231,6 +231,11 @@ typedef NS_ENUM(NSUInteger, MMViewControllerMetrics) {
 - (void)didMoveToNavigationController;
 
 /**
+ *  Called after the navigation controller has updated its navigation stack.
+ */
+- (void)navigationControllerViewControllersDidChange;
+
+/**
  *  The navigation controller of the recipient.
  */
 @property (weak, nonatomic, readonly) MMNavigationController *navigationController;

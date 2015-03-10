@@ -162,9 +162,13 @@
     UIView *actualLeftButton = nil;
     
     // First, what we should display here?
+    BOOL pagingEnabled = self.pagingEnabled;
+    BOOL isLastViewController = self.navigationController.viewControllers.lastObject == self.viewController;
+    BOOL isHiddenInLastColumn = !pagingEnabled && isLastViewController;
+    
     BOOL showsLeftButton = _leftButton != nil;
     BOOL showsRightButton = _rightButton != nil;
-    BOOL showsBackButton = !showsLeftButton && !_hidesBackButton && _backActionAvailable;
+    BOOL showsBackButton = !isHiddenInLastColumn && !showsLeftButton && !_hidesBackButton && _backActionAvailable;
     BOOL usesMultilineHeading = _configurationOptions.usingMultilineHeading;
     
     // Calculate title width.
@@ -182,7 +186,7 @@
     // Calculate back button.
     BOOL useRegularBackButton = NO;
     if (showsBackButton) {
-        if (self.pagingEnabled) {
+        if (pagingEnabled) {
             CGFloat rightCompression = 0.0f;
             if (showsRightButton) {
                 rightCompression = [_rightButton sizeThatFits:fit].width;
@@ -318,6 +322,11 @@
     if (!self.pagingEnabled) {
         [self setRotatesBackButton:(viewController != self.viewController)];
     }
+}
+
+- (void)navigationControllerViewControllersDidChange
+{
+    [self setNeedsLayout];
 }
 
 #pragma mark - Back rotation.

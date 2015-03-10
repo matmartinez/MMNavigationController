@@ -105,6 +105,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     
     if (isViewLoaded) {
         [self.scrollView reloadData];
+        [self _notifyViewControllersDidChange];
     }
 }
 
@@ -223,6 +224,9 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     
     [self.scrollView insertPages:[NSIndexSet indexSetWithIndex:page] animated:animated];
     [self.scrollView scrollToPage:page animated:animated];
+    
+    // Note update.
+    [self _notifyViewControllersDidChange];
 }
 
 - (NSArray *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated
@@ -256,6 +260,9 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     
     // Remove supplementary views.
     [self _removeSupplementaryViewsForViewControllers:popViewControllers];
+    
+    // Note update.
+    [self _notifyViewControllersDidChange];
     
     return popViewControllers;
 }
@@ -480,6 +487,13 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     }
 }
 
+- (void)_notifyViewControllersDidChange
+{
+    for (MMNavigationSupplementaryView *view in self.headerFooterViewArray.copy) {
+        [view navigationControllerViewControllersDidChange];
+    }
+}
+
 @end
 
 @implementation MMNavigationSupplementaryView
@@ -524,6 +538,11 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 }
 
 - (void)didMoveToNavigationController
+{
+    
+}
+
+- (void)navigationControllerViewControllersDidChange
 {
     
 }
