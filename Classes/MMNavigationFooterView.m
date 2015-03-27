@@ -159,21 +159,36 @@ const CGFloat MMNavigationFooterFlexibleWidth = CGFLOAT_MAX;
 
 - (void)setItems:(NSArray *)items
 {
-    if (![items isEqualToArray:_items]) {
-        for (id item in _items) {
-            if ([item isKindOfClass:[UIView class]]) {
-                [item removeFromSuperview];
-            }
+    [self setItems:items animated:NO];
+}
+
+- (void)setItems:(NSArray *)items animated:(BOOL)animated
+{
+    if ([items isEqualToArray:_items]) {
+        return;
+    }
+    
+    for (id item in _items) {
+        if ([item isKindOfClass:[UIView class]]) {
+            [item removeFromSuperview];
         }
-        
-        _items = items;
-        
-        for (id item in items) {
-            if ([item isKindOfClass:[UIView class]]) {
-                [self addSubview:item];
-            }
+    }
+    
+    _items = items;
+    
+    for (id item in items) {
+        if ([item isKindOfClass:[UIView class]]) {
+            [self addSubview:item];
         }
+    }
+    
+    if (animated) {
+        [self layoutIfNeeded];
         
+        [UIView transitionWithView:self duration:0.25f options:UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionTransitionCrossDissolve animations:^{
+            [self.layer setNeedsDisplay];
+        } completion:NULL];
+    } else {
         [self setNeedsLayout];
     }
 }

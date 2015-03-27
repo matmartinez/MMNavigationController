@@ -14,6 +14,8 @@ extern const CGFloat MMNavigationFooterFlexibleWidth;
 
 @property (copy, nonatomic) NSArray *items;
 
+- (void)setItems:(NSArray *)items animated:(BOOL)animated;
+
 @property (strong, nonatomic) UIColor *separatorColor UI_APPEARANCE_SELECTOR;
 
 @property (strong, nonatomic) UIView *backgroundView;
