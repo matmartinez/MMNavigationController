@@ -381,6 +381,10 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
                 break;
             }
         }
+        
+        if (_delegateFlags.delegateWillDisplayViewController) {
+            [self.delegate navigationController:self willDisplayViewController:viewController];
+        }
     }
 }
 
@@ -390,6 +394,10 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     if (viewController) {
         [viewController beginAppearanceTransition:NO animated:(scrollView.isDecelerating || scrollView.isTracking)];
         [viewController endAppearanceTransition];
+        
+        if (_delegateFlags.delegateDidEndDisplayingViewController) {
+            [self.delegate navigationController:self didEndDisplayingViewController:viewController];
+        }
     }
 }
 
