@@ -184,7 +184,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     _delegate = delegate;
     
     _delegateFlags.delegateCustomWidthForViewController = [delegate respondsToSelector:@selector(navigationController:metricsForViewController:)];
-    _delegateFlags.delegateDidEndDisplayingViewController = [delegate respondsToSelector:@selector(navigationController:willDisplayViewController:)];
+    _delegateFlags.delegateDidEndDisplayingViewController = [delegate respondsToSelector:@selector(navigationController:didEndDisplayingViewController:)];
     _delegateFlags.delegateWillDisplayViewController = [delegate respondsToSelector:@selector(navigationController:willDisplayViewController:)];
     _delegateFlags.delegateWillSnapViewController = [delegate respondsToSelector:@selector(navigationController:willSnapToViewController:)];
     _delegateFlags.delegateDidSnapViewController = [delegate respondsToSelector:@selector(navigationController:didSnapToViewController:)];
