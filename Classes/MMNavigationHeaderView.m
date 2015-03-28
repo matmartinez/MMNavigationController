@@ -351,7 +351,7 @@
 
 - (BOOL)pagingEnabled
 {
-    return [(UIScrollView *)self.navigationController.view isPagingEnabled];
+    return self.navigationController.scrollMode == MMNavigationScrollModePaging;
 }
 
 #pragma mark - Poiting inside.

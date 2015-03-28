@@ -39,6 +39,20 @@ typedef NS_ENUM(NSUInteger, MMViewControllerMetrics) {
 };
 
 /**
+ *  Defines the available scroll modes for the navigation controller interface.
+ */
+typedef NS_ENUM(NSUInteger, MMNavigationScrollMode){
+    /**
+     *  The scrolling stops on multiples of the view's bounds.
+     */
+    MMNavigationScrollModePaging,
+    /**
+     *  The scrolling stops on the nearest snap point.
+     */
+    MMNavigationScrollModeNearestSnapPoint
+};
+
+/**
  *  Defines the view controller metrics used by the navigation controller and provides a set of notifications when
  *  views become visible.
  */
@@ -54,6 +68,20 @@ typedef NS_ENUM(NSUInteger, MMViewControllerMetrics) {
  *  @return The determined view controller metrics.
  */
 - (MMViewControllerMetrics)navigationController:(MMNavigationController *)nc metricsForViewController:(UIViewController *)viewController;
+
+/**
+ *  The navigation controller calls this method before changing its @c scrollMode property. Use the provided coordinator object 
+ *  to animate any changes you make.
+ *
+ *  @param nc          The navigation controller.
+ *  @param scrollMode  The scroll mode applied to the navigation interface.
+ *  @param coordinator The transition coordinator object managing the change. You can use this object to animate any changes or
+ *                     to get information about the transition that is in progress.
+ *
+ *  @note This method is called in response to a trait collection change.
+ *
+ */
+- (void)navigationController:(MMNavigationController *)nc willTransitionToScrollMode:(MMNavigationScrollMode)scrollMode transitionCoordinator:(id <UIViewControllerTransitionCoordinatorContext>)coordinator;
 
 /**
  *  Called just before the navigation controller displays a view controller's view.
@@ -133,6 +161,11 @@ typedef NS_ENUM(NSUInteger, MMViewControllerMetrics) {
  *  The delegate of the navigation controller object.
  */
 @property (weak, nonatomic) id <MMNavigationControllerDelegate> delegate;
+
+/**
+ *  The current scroll mode for the navigation interface.
+ */
+@property (readonly, nonatomic) MMNavigationScrollMode scrollMode;
 
 /**
  *  Scrolls the navigation interface to the specified view controller.

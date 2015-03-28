@@ -19,6 +19,7 @@
         unsigned int delegateCustomWidthForViewController : 1;
         unsigned int delegateWillSnapViewController : 1;
         unsigned int delegateDidSnapViewController : 1;
+        unsigned int delegateWillTransitionToScrollMode : 1;
     } _delegateFlags;
 }
 
@@ -188,6 +189,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     _delegateFlags.delegateWillDisplayViewController = [delegate respondsToSelector:@selector(navigationController:willDisplayViewController:)];
     _delegateFlags.delegateWillSnapViewController = [delegate respondsToSelector:@selector(navigationController:willSnapToViewController:)];
     _delegateFlags.delegateDidSnapViewController = [delegate respondsToSelector:@selector(navigationController:didSnapToViewController:)];
+    _delegateFlags.delegateWillTransitionToScrollMode = [delegate respondsToSelector:@selector(navigationController:willTransitionToScrollMode:transitionCoordinator:)];
 }
 
 #pragma mark - Scroll to.
@@ -202,6 +204,14 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     }
     
     [self.scrollView scrollToPage:idx animated:animated];
+}
+
+- (MMNavigationScrollMode)scrollMode
+{
+    if (self.scrollView.isPagingEnabled) {
+        return MMNavigationScrollModePaging;
+    }
+    return MMNavigationScrollModeNearestSnapPoint;
 }
 
 #pragma mark - Operations.
@@ -294,10 +304,21 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 - (void)_configureScrollViewWithTraitCollection:(UITraitCollection *)traitCollection
 {
+    [self _configureScrollViewWithTraitCollection:traitCollection transitionCoordinator:nil];
+}
+
+- (void)_configureScrollViewWithTraitCollection:(UITraitCollection *)traitCollection transitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
     BOOL horizontallyCompact = traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     BOOL pagingEnabled = horizontallyCompact;
     
     if (pagingEnabled != self.scrollView.isPagingEnabled) {
+        MMNavigationScrollMode scrollMode = pagingEnabled ? MMNavigationScrollModePaging : MMNavigationScrollModeNearestSnapPoint;
+        
+        if (_delegateFlags.delegateWillTransitionToScrollMode) {
+            [self.delegate navigationController:self willTransitionToScrollMode:scrollMode transitionCoordinator:coordinator];
+        }
+        
         [self.scrollView setPagingEnabled:pagingEnabled];
         [self.scrollView invalidateLayout];
     }
@@ -306,7 +327,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
-    [self _configureScrollViewWithTraitCollection:newCollection];
+    [self _configureScrollViewWithTraitCollection:newCollection transitionCoordinator:coordinator];
 }
 
 #pragma mark - Snap scroll view data source.
