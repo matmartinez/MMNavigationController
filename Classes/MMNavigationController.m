@@ -496,14 +496,18 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
         viewClass = self.footerViewClass ?: [MMNavigationFooterView class];
     }
     
-    MMNavigationSupplementaryView *view = [[viewClass alloc] initWithFrame:CGRectZero];
-    view.navigationController = self;
-    view.viewController = viewController;
-    view._viewType = type;
+    if (viewClass) {
+        MMNavigationSupplementaryView *view = [[viewClass alloc] initWithFrame:CGRectZero];
+        view.navigationController = self;
+        view.viewController = viewController;
+        view._viewType = type;
+        
+        [self.headerFooterViewArray addObject:view];
+        
+        return view;
+    }
     
-    [self.headerFooterViewArray addObject:view];
-    
-    return view;
+    return nil;
 }
 
 - (void)_removeSupplementaryViewsForViewControllers:(NSArray *)viewControllers
