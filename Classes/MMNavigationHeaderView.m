@@ -354,32 +354,22 @@
     return self.navigationController.scrollMode == MMNavigationScrollModePaging;
 }
 
-#pragma mark - Poiting inside.
+#pragma mark - Hit testing.
 
-- (BOOL)_pointInside:(CGPoint)point withButton:(UIButton *)button
+- (BOOL)_pointInside:(CGPoint)point withEvent:(UIEvent *)event proposedButton:(UIButton *)button
 {
-    CGRect rect = CGRectZero;
-    rect.origin.x = CGRectGetMinX(button.frame);
-    rect.size.width = CGRectGetWidth(button.frame);
-    rect.size.height = CGRectGetHeight(self.bounds);
-    
-    CGRect targetPointInsideHeaderRect = CGRectInset(rect, -15.0f, -15.0f);
-    
-    return CGRectContainsPoint(targetPointInsideHeaderRect, point);
-}
-
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
-{
-    BOOL pointInside = [super pointInside:point withEvent:event];
-    if (!pointInside) {
-        for (UIView *subview in self.subviews) {
-            UIButton *button = (UIButton *)subview;
-            if ([button isEnabled] && [self _pointInside:point withButton:button]) {
-                return YES;
-            }
-        }
+    UIView *hitTest = [super hitTest:button.center withEvent:event];
+    if ([hitTest isDescendantOfView:button]) {
+        CGRect rect = CGRectZero;
+        rect.origin.x = CGRectGetMinX(button.frame);
+        rect.size.width = CGRectGetWidth(button.frame);
+        rect.size.height = CGRectGetHeight(self.bounds);
+        
+        CGRect targetPointInsideHeaderRect = CGRectInset(rect, -15.0f, -15.0f);
+        
+        return CGRectContainsPoint(targetPointInsideHeaderRect, point);
     }
-    return pointInside;
+    return NO;
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
@@ -388,7 +378,7 @@
     if (!hitTest || hitTest == self || hitTest == self.backgroundView) {
         for (UIView *subview in self.subviews) {
             UIButton *button = (UIButton *)subview;
-            if ([button isEnabled] && [self _pointInside:point withButton:button]) {
+            if ([self _pointInside:point withEvent:event proposedButton:button]) {
                 return button;
             }
         }
