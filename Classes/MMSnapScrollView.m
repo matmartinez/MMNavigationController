@@ -10,6 +10,15 @@
 #import "MMDecelerationAnimator.h"
 #import <QuartzCore/QuartzCore.h>
 
+@interface _MMSnapScrollViewDelegateProxy : NSObject
+
+- (instancetype)initWithDelegate:(id <MMSnapScrollViewDelegate>)delegate scrollView:(MMSnapScrollView *)scrollView;
+
+@property (weak, nonatomic) MMSnapScrollView *scrollView;
+@property (weak, nonatomic) id <MMSnapScrollViewDelegate> delegate;
+
+@end
+
 @interface _MMSnapScrollViewLayoutAttributes : NSObject
 
 @property (assign, nonatomic) CGRect frame;
@@ -36,7 +45,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     } _delegateFlags;
 }
 
-@property (weak, nonatomic) id <MMSnapScrollViewDelegate> externalDelegate;
+@property (strong, nonatomic) _MMSnapScrollViewDelegateProxy *delegateProxy;
 
 @property (assign, nonatomic, readwrite) NSInteger numberOfPages;
 @property (assign, nonatomic, getter=isContentSizeInvalidated) BOOL contentSizeInvalidated;
@@ -309,7 +318,8 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     }
     
     // Update with new content size.
-    self.contentSize = CGSizeMake(origin, CGRectGetHeight(self.bounds));
+    CGSize contentSize = CGSizeMake(origin, CGRectGetHeight(self.bounds));
+    [self _setContentSize:contentSize];
     
     // Update scrolling offset accordingly.
     [self scrollToPage:self.pagesForVisibleViews.firstIndex animated:NO];
@@ -539,11 +549,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 
 - (void)setDelegate:(id<MMSnapScrollViewDelegate>)delegate
 {
-    if (delegate == self.externalDelegate) {
-        return;
-    }
-    
-    self.externalDelegate = delegate;
+    self.delegateProxy = delegate ? [[_MMSnapScrollViewDelegateProxy alloc] initWithDelegate:delegate scrollView:self] : nil;
     
     _delegateFlags.delegateDidEndDisplayingView = [delegate respondsToSelector:@selector(scrollView:didEndDisplayingView:atPage:)];
     _delegateFlags.delegateWillDisplayView = [delegate respondsToSelector:@selector(scrollView:willDisplayView:atPage:)];
@@ -553,7 +559,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 
 - (id<MMSnapScrollViewDelegate>)delegate
 {
-    return self.externalDelegate;
+    return self.delegateProxy.delegate;
 }
 
 - (void)setDataSource:(id<MMSnapScrollViewDataSource>)dataSource
@@ -569,20 +575,34 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 
 - (void)setBounds:(CGRect)bounds
 {
-    if (!CGSizeEqualToSize(bounds.size, self.bounds.size)) {
-        self.contentSizeInvalidated = YES;
+    if (!CGRectEqualToRect(bounds, self.bounds)) {
+        if (!CGSizeEqualToSize(bounds.size, self.bounds.size)) {
+            self.contentSizeInvalidated = YES;
+        }
+        
+        [super setBounds:bounds];
     }
-    
-    [super setBounds:bounds];
 }
 
 - (void)setFrame:(CGRect)frame
 {
-    if (!CGSizeEqualToSize(frame.size, self.frame.size)) {
-        self.contentSizeInvalidated = YES;
+    if (!CGRectEqualToRect(frame, self.frame)) {
+        if (!CGSizeEqualToSize(frame.size, self.frame.size)) {
+            self.contentSizeInvalidated = YES;
+        }
+        
+        [super setFrame:frame];
     }
-    
-    [super setFrame:frame];
+}
+
+- (void)setContentSize:(CGSize)contentSize
+{
+    // Content size is managed by MMSnapScrollView.
+}
+
+- (void)_setContentSize:(CGSize)contentSize
+{
+    [super setContentSize:contentSize];
 }
 
 - (void)setPagingEnabled:(BOOL)pagingEnabled
@@ -631,6 +651,10 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
         [self.scrollToAnimator cancelAnimation];
         [self _removeQueuedViewsToRemove];
     }
+    
+    if ([self.delegate respondsToSelector:@selector(scrollViewWillBeginDragging:)]) {
+        [self.delegate scrollViewWillBeginDragging:scrollView];
+    }
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
@@ -644,6 +668,10 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     if (_delegateFlags.delegateWillSnapToPage && !CGPointEqualToPoint(*targetContentOffset, scrollView.contentOffset)) {
         [self _notifySnapToTargetContentOffset:*targetContentOffset completed:NO];
     }
+    
+    if ([self.delegate respondsToSelector:@selector(scrollViewWillEndDragging:withVelocity:targetContentOffset:)]) {
+        [self.delegate scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
+    }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
@@ -651,6 +679,10 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     // Notify the delegate snapping did happen.
     if (_delegateFlags.delegateDidSnapToPage) {
         [self _notifySnapToTargetContentOffset:scrollView.contentOffset completed:YES];
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(scrollViewDidEndDecelerating:)]) {
+        [self.delegate scrollViewDidEndDecelerating:scrollView];
     }
 }
 
@@ -663,7 +695,13 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     
     // Remove views after a delete animation is complete.
     [self _removeQueuedViewsToRemove];
+    
+    if ([self.delegate respondsToSelector:@selector(scrollViewDidEndScrollingAnimation:)]) {
+        [self.delegate scrollViewDidEndScrollingAnimation:scrollView];
+    }
 }
+
+#pragma mark - Scrolling behavior.
 
 - (void)_notifySnapToTargetContentOffset:(CGPoint)targetContentOffset completed:(BOOL)completed
 {
@@ -698,7 +736,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
         CGRect frame = first.frame;
         
         // Go to next/prev one.
-        if (CGRectGetMinX(targetRect) > CGRectGetMidX(frame) || fabsf(velocity.x) > 0) {
+        if (CGRectGetMinX(targetRect) > CGRectGetMidX(frame) || fabs(velocity.x) > 0) {
             // Don't go over contentSize (keep this page if so).
             if (CGRectGetMaxX(frame) < self.contentSize.width) {
                 offsetAdjustment = CGRectGetMaxX(frame);
@@ -706,7 +744,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
                 offsetAdjustment = CGRectGetMinX(frame);
             }
             
-            if (fabsf(velocity.x) > 0 && velocity.x < 0) {
+            if (fabs(velocity.x) > 0 && velocity.x < 0) {
                 offsetAdjustment = CGRectGetMinX(frame);
             }
         }
@@ -755,6 +793,10 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
     UIView *view = [super hitTest:point withEvent:event];
+    
+    if (self.pagingEnabled) {
+        return view;
+    }
     
     CGRect rect = self.bounds;
     rect.origin = self.contentOffset;
@@ -1004,6 +1046,44 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p> frame: %@", self.class, self, NSStringFromCGRect(self.frame)];
+}
+
+@end
+
+@implementation _MMSnapScrollViewDelegateProxy
+
+- (instancetype)initWithDelegate:(id<MMSnapScrollViewDelegate>)delegate scrollView:(MMSnapScrollView *)scrollView
+{
+    self = [super init];
+    if (self) {
+        _delegate = delegate;
+        _scrollView = scrollView;
+    }
+    return self;
+}
+
+- (BOOL)respondsToSelector:(SEL)aSelector
+{
+    if ([self.scrollView respondsToSelector:aSelector] || [self.delegate respondsToSelector:aSelector]){
+        return YES;
+    }
+    return NO;
+}
+
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    id scrollView = self.scrollView;
+    id delegate = self.delegate;
+    
+    if ([scrollView respondsToSelector:aSelector]){
+        return scrollView;
+    }
+    
+    if ([delegate respondsToSelector:aSelector]){
+        return delegate;
+    }
+    
+    return nil;
 }
 
 @end
