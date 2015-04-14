@@ -50,6 +50,9 @@ const CGFloat MMNavigationFooterFlexibleWidth = CGFLOAT_MAX;
 
 #pragma mark - Layout.
 
+static const NSString *MMNavigationFooterInfoObjectKey = @"Object";
+static const NSString *MMNavigationFooterInfoSizeKey = @"Size";
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -62,20 +65,22 @@ const CGFloat MMNavigationFooterFlexibleWidth = CGFLOAT_MAX;
     static const CGFloat spacing = 8.0f;
     
     const CGFloat maximumContentWidth = CGRectGetWidth(bounds) - (pad * 2.0f);
+    const CGSize maximumItemSize = CGSizeMake(maximumContentWidth, CGRectGetHeight(bounds));
     
     CGFloat contentWidth = 0.0f;
     NSUInteger flexibleItemsCount = 0;
     
     NSArray *items = self.items;
     NSMutableArray *itemsToLayout = [NSMutableArray arrayWithCapacity:items.count];
-    NSMutableArray *itemSizes = [NSMutableArray arrayWithCapacity:items.count];
     
     for (id item in items) {
         // Find out size for this item.
         CGSize itemSize = CGSizeZero;
         
         if ([item isKindOfClass:[UIView class]]) {
-            itemSize = [(UIView *)item sizeThatFits:bounds.size];
+            itemSize = [(UIView *)item sizeThatFits:maximumItemSize];
+            itemSize.width = MIN(itemSize.width, maximumItemSize.width);
+            
         } else if ([item isKindOfClass:[MMNavigationFooterSpace class]]) {
             CGFloat width = [(MMNavigationFooterSpace *)item width];
             
@@ -86,30 +91,40 @@ const CGFloat MMNavigationFooterFlexibleWidth = CGFLOAT_MAX;
             }
         }
         
-        CGFloat proposedContentWidth = contentWidth + itemSize.width + ((itemsToLayout.count) * spacing);
+        NSDictionary *info = @{ MMNavigationFooterInfoSizeKey : [NSValue valueWithCGSize:itemSize],
+                                MMNavigationFooterInfoObjectKey : item };
+        
+        [itemsToLayout addObject:info];
+    }
+    
+    const NSInteger actualItemsCount = itemsToLayout.count - flexibleItemsCount;
+    const CGFloat interSeparationWidth = actualItemsCount == 1 ? 0.0f : actualItemsCount * spacing;
+    
+    NSUInteger idx = 0;
+    for (NSDictionary *info in itemsToLayout.copy) {
+        CGSize itemSize = [info[MMNavigationFooterInfoSizeKey] CGSizeValue];
+        
+        CGFloat proposedContentWidth = contentWidth + itemSize.width + interSeparationWidth;
         if (proposedContentWidth > maximumContentWidth) {
+            [itemsToLayout removeObjectsInRange:NSMakeRange(idx, itemsToLayout.count - idx)];
             break;
         }
         
-        [itemsToLayout addObject:item];
-        [itemSizes addObject:[NSValue valueWithCGSize:itemSize]];
-        
         contentWidth += itemSize.width;
+        idx++;
     }
     
     CGFloat flexibleUnitWidth = 0.0f;
     if (flexibleItemsCount > 0) {
-        CGFloat separatorWidth = (itemsToLayout.count - 1) * spacing;
-        
-        flexibleUnitWidth = floorf((maximumContentWidth - contentWidth - separatorWidth) / flexibleItemsCount);
+        flexibleUnitWidth = floorf((maximumContentWidth - contentWidth - interSeparationWidth) / flexibleItemsCount);
     }
     
     // Layout.
     CGFloat contentOffset = pad;
     
-    NSUInteger idx = 0;
-    for (id item in itemsToLayout) {
-        CGSize itemSize = [itemSizes[idx] CGSizeValue];
+    for (NSDictionary *info in itemsToLayout) {
+        id item = info[MMNavigationFooterInfoObjectKey];
+        CGSize itemSize = [info[MMNavigationFooterInfoSizeKey] CGSizeValue];
         
         if ([item isKindOfClass:[MMNavigationFooterSpace class]]) {
             CGFloat width = [(MMNavigationFooterSpace *)item width];
@@ -129,7 +144,11 @@ const CGFloat MMNavigationFooterFlexibleWidth = CGFLOAT_MAX;
             [(UIView *)item setFrame:rect];
         }
         
-        contentOffset = CGRectGetMaxX(rect) + spacing;
+        contentOffset = CGRectGetMaxX(rect);
+        
+        if (interSeparationWidth > 0.0f) {
+            contentOffset += spacing;
+        }
         
         idx++;
     }
