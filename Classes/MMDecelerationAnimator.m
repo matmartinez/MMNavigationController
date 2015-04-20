@@ -67,7 +67,7 @@
     
     [self setContentOffset:o];
     
-    if ((fabsf(o.x - lastOffset.x) < 0.1) && (fabsf(o.y - lastOffset.y) < 0.1)) {
+    if ((fabs(o.x - lastOffset.x) < 0.1) && (fabs(o.y - lastOffset.y) < 0.1)) {
         [self stopAnimation];
         [self.scrollView setContentOffset:destinationOffset];
     } else {
