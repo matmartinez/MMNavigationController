@@ -529,6 +529,55 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 @end
 
+@implementation MMNavigationController (UIInterfaceRestoration)
+
+static NSString * MMViewControllerChildrenKey = @"kUIViewControllerChildrenKey";
+static NSString * MMViewControllerVisibleViewControllerKey = @"MMViewControllerVisibleViewControllerKey";
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder
+{
+    NSArray *childViewControllers = self.childViewControllers;
+    NSMutableArray *restoringViewControllers = [NSMutableArray arrayWithCapacity:childViewControllers.count];
+    
+    for (UIViewController *viewController in childViewControllers) {
+        if (!viewController.restorationIdentifier) {
+            continue;
+        }
+        
+        [restoringViewControllers addObject:viewController];
+    }
+    
+    if (restoringViewControllers.count > 0) {
+        UIViewController *firstVisibleViewController = self.visibleViewControllers.firstObject;
+        
+        // Ignore snapshot if the visible view controller is not participating in restoration.
+        if (!firstVisibleViewController.restorationIdentifier) {
+            [[UIApplication sharedApplication] ignoreSnapshotOnNextApplicationLaunch];
+        } else {
+            [coder encodeObject:firstVisibleViewController forKey:MMViewControllerVisibleViewControllerKey];
+        }
+        
+        // Encode restoring view controllers.
+        [coder encodeObject:restoringViewControllers forKey:MMViewControllerChildrenKey];
+    }
+    
+    [super encodeRestorableStateWithCoder:coder];
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder
+{
+    UIViewController *restoredViewControllers = [coder decodeObjectForKey:MMViewControllerChildrenKey];
+    UIViewController *selectedViewController = [coder decodeObjectForKey:MMViewControllerVisibleViewControllerKey];
+    
+    if (restoredViewControllers && selectedViewController) {
+        [self scrollToViewController:selectedViewController animated:NO];
+    }
+    
+    [super decodeRestorableStateWithCoder:coder];
+}
+
+@end
+
 @implementation MMNavigationSupplementaryView
 
 - (UIViewController *)previousViewController
