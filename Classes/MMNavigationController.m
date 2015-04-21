@@ -566,7 +566,7 @@ static NSString * MMViewControllerVisibleViewControllerKey = @"MMViewControllerV
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder
 {
-    UIViewController *restoredViewControllers = [coder decodeObjectForKey:MMViewControllerChildrenKey];
+    NSArray *restoredViewControllers = [coder decodeObjectForKey:MMViewControllerChildrenKey];
     UIViewController *selectedViewController = [coder decodeObjectForKey:MMViewControllerVisibleViewControllerKey];
     
     if (restoredViewControllers && selectedViewController) {

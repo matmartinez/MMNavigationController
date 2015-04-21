@@ -50,6 +50,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 @property (assign, nonatomic, readwrite) NSInteger numberOfPages;
 @property (assign, nonatomic, getter=isContentSizeInvalidated) BOOL contentSizeInvalidated;
 @property (assign, nonatomic) NSInteger snappedPage;
+@property (assign, nonatomic) NSInteger deferScrollToPage;
 
 @property (strong, nonatomic) NSMutableDictionary *visibleViewsDictionary;
 @property (strong, nonatomic) NSMutableArray *layoutAttributes;
@@ -105,6 +106,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     _layoutAttributes = [NSMutableArray array];
     _contentSizeInvalidated = YES;
     _snappedPage = NSNotFound;
+    _deferScrollToPage = NSNotFound;
     _separatorClassDefinedWidth = _MMStockSnapViewSeparatorWidth;
     
     // Custom animator for content offset updates.
@@ -149,8 +151,13 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 {
     [super layoutSubviews];
     
-    // Validate and perform layout.
-    [self _validateLayout];
+    // Validate layout if needed.
+    if (self.isContentSizeInvalidated) {
+        [self _validateLayout];
+        [self _validateContentOffset];
+    }
+    
+    // Perform the layout.
     [self _performLayout];
     
     // Notify snap if layout affected snap point.
@@ -321,11 +328,19 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     CGSize contentSize = CGSizeMake(origin, CGRectGetHeight(self.bounds));
     [self _setContentSize:contentSize];
     
-    // Update scrolling offset accordingly.
-    [self scrollToPage:self.pagesForVisibleViews.firstIndex animated:NO];
-    
     // Note validation.
     self.contentSizeInvalidated = NO;
+}
+
+- (void)_validateContentOffset
+{
+    if (_deferScrollToPage != NSNotFound) {
+        [self scrollToPage:_deferScrollToPage animated:NO];
+        _deferScrollToPage = NSNotFound;
+    } else {
+        // Update scrolling offset accordingly.
+        [self scrollToPage:self.pagesForVisibleViews.firstIndex animated:NO];
+    }
 }
 
 - (void)_notifySnapIfNeeded
@@ -360,6 +375,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     
     // Clean snap page.
     _snappedPage = NSNotFound;
+    _deferScrollToPage = NSNotFound;
     
     // Invalidate layout.
     [self invalidateLayout];
@@ -423,6 +439,11 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 - (void)scrollToPage:(NSInteger)page animated:(BOOL)animated
 {
     if (page < _numberOfPages) {
+        if (!self.window || _layoutAttributes.count < page) {
+            _deferScrollToPage = page;
+            return;
+        }
+        
         _MMSnapScrollViewLayoutAttributes *attributes = _layoutAttributes[page];
         CGRect frame = attributes.frame;
         
