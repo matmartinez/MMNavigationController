@@ -147,6 +147,20 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     return visibleViewControllers;
 }
 
+- (UIViewController *)partiallyVisibleViewController
+{
+    if (!self.isViewLoaded || self.scrollMode == MMNavigationScrollModePaging) {
+        return nil;
+    }
+    
+    UIViewController *lastVisibleViewController = self.visibleViewControllers.lastObject;
+    if (!CGRectContainsRect(self.view.bounds, lastVisibleViewController.view.frame)) {
+        return lastVisibleViewController;
+    }
+    
+    return nil;
+}
+
 #pragma mark - View.
 
 - (void)loadView

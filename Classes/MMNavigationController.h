@@ -158,6 +158,13 @@ typedef NS_ENUM(NSUInteger, MMNavigationScrollMode){
 @property (readonly, copy, nonatomic) NSArray *visibleViewControllers;
 
 /**
+ *  Returns if any, a view controller that's partially visible.
+ *
+ *  @note This property will always return @c nil when using the paging scroll mode.
+ */
+@property (readonly, nonatomic) UIViewController *partiallyVisibleViewController;
+
+/**
  *  The delegate of the navigation controller object.
  */
 @property (weak, nonatomic) id <MMNavigationControllerDelegate> delegate;
