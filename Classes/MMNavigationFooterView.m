@@ -98,7 +98,9 @@ static const NSString *MMNavigationFooterInfoSizeKey = @"Size";
     }
     
     const NSInteger actualItemsCount = itemsToLayout.count - flexibleItemsCount;
-    const CGFloat interSeparationWidth = actualItemsCount == 1 ? 0.0f : actualItemsCount * spacing;
+    const NSInteger interSeparationCount = (itemsToLayout.count - 1);
+    
+    CGFloat interSeparationWidth = actualItemsCount == 1 ? 0.0f : interSeparationCount * spacing;
     
     NSUInteger idx = 0;
     for (NSDictionary *info in itemsToLayout.copy) {
@@ -116,7 +118,7 @@ static const NSString *MMNavigationFooterInfoSizeKey = @"Size";
     
     CGFloat flexibleUnitWidth = 0.0f;
     if (flexibleItemsCount > 0) {
-        flexibleUnitWidth = floorf((maximumContentWidth - contentWidth - interSeparationWidth) / flexibleItemsCount);
+        flexibleUnitWidth = ((maximumContentWidth - contentWidth - interSeparationWidth) / flexibleItemsCount);
     }
     
     // Layout.
@@ -135,7 +137,7 @@ static const NSString *MMNavigationFooterInfoSizeKey = @"Size";
         }
         
         CGRect rect = (CGRect){
-            .origin.x = contentOffset,
+            .origin.x = roundf(contentOffset),
             .origin.y = roundf((CGRectGetHeight(bounds) - itemSize.height) / 2.0f),
             .size = itemSize
         };
@@ -149,8 +151,6 @@ static const NSString *MMNavigationFooterInfoSizeKey = @"Size";
         if (interSeparationWidth > 0.0f) {
             contentOffset += spacing;
         }
-        
-        idx++;
     }
     
     const CGFloat separatorHeight = 1.0f / [UIScreen mainScreen].scale;

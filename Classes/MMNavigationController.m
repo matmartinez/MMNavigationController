@@ -529,14 +529,14 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 @end
 
-@implementation MMNavigationController (UIInterfaceRestoration)
+@implementation MMNavigationController (StateRestoration)
 
 static NSString * MMViewControllerChildrenKey = @"kUIViewControllerChildrenKey";
 static NSString * MMViewControllerVisibleViewControllerKey = @"MMViewControllerVisibleViewControllerKey";
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
-    NSArray *childViewControllers = self.childViewControllers;
+    NSArray *childViewControllers = self.viewControllers;
     NSMutableArray *restoringViewControllers = [NSMutableArray arrayWithCapacity:childViewControllers.count];
     
     for (UIViewController *viewController in childViewControllers) {
