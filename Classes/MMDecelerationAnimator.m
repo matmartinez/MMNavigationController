@@ -26,7 +26,7 @@
     self = [super init];
     if (self) {
         self.scrollView = scrollView;
-        self.decelerationRate = 0.86f;
+        self.decelerationRate = 0.83f;
     }
     return self;
 }
