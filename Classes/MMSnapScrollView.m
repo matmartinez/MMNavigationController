@@ -478,7 +478,9 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     
     _numberOfPages = [self.dataSource numberOfPagesInScrollView:self];
     
-    NSAssert(_numberOfPages == numberOfPagesRequiredAfterUpdate, @"attempt to insert (%ld) pages (there are only %ld pages after the update)", (long)insertedPages.count, (long)_numberOfPages);
+    if (numberOfPagesBeforeUpdate != numberOfPagesRequiredAfterUpdate) {
+        [NSException raise:@"Invalid number of pages" format:@"attempt to insert (%ld) pages (there are only %ld pages after the update)", (long)insertedPages.count, (long)_numberOfPages];
+    }
     
     // Invalidate the layout.
     [self invalidateLayout];
@@ -526,7 +528,9 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     
     _numberOfPages = [self.dataSource numberOfPagesInScrollView:self];
     
-    NSAssert(_numberOfPages == numberOfPagesRequiredAfterUpdate, @"attempt to delete (%ld) pages (there are only %ld pages after the update)", (long)pages.count, (long)_numberOfPages);
+    if (numberOfPagesBeforeUpdate != numberOfPagesRequiredAfterUpdate) {
+        [NSException raise:@"Invalid number of pages" format:@"attempt to delete (%ld) pages (there are only %ld pages after the update)", (long)pages.count, (long)_numberOfPages];
+    }
     
     // Invalidate the layout.
     [self invalidateLayout];

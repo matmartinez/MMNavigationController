@@ -338,7 +338,7 @@
         
         CGAffineTransform t = rotatesBackButton ? CGAffineTransformMakeRotation(M_PI) : CGAffineTransformIdentity;
         
-        BOOL animated = self.window;
+        BOOL animated = self.window != nil;
         if (animated) {
             [UIView animateWithDuration:0.5f delay:0 usingSpringWithDamping:0.9f initialSpringVelocity:1.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
                 _compactBackButton.transform = t;
