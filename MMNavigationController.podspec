@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "MMNavigationController"
-  s.version      = "0.1.4"
+  s.version      = "0.1.5"
   s.summary      = "A heavily interactive, responsive and beautiful navigation interface."
   s.homepage     = "http://www.matmartinez.net/"
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
