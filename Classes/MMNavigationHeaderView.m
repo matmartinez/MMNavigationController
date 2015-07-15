@@ -11,6 +11,7 @@
 @interface MMNavigationHeaderView () {
     struct {
         unsigned int usingMultilineHeading : 1;
+        unsigned int usingCustomTitleView : 1;
         unsigned int showsRightButton : 1;
         unsigned int showsLeftButton : 1;
         unsigned int showsBackButton : 1;
@@ -170,17 +171,24 @@
     BOOL showsRightButton = _rightButton != nil;
     BOOL showsBackButton = !isHiddenInLastColumn && !showsLeftButton && !_hidesBackButton && _backActionAvailable;
     BOOL usesMultilineHeading = _configurationOptions.usingMultilineHeading;
+    BOOL usesCustomTitleView = _titleView != nil;
     
     // Calculate title width.
-    CGFloat widthNeededToFitTitle = 0.0f;
+    CGSize sizeNeededToFitTitle = CGSizeZero;
+    CGSize tSize = CGSizeZero;
+    CGSize sSize = CGSizeZero;
     
-    CGSize tSize = [_titleLabel sizeThatFits:fit];
-    CGSize sSize = [_subtitleLabel sizeThatFits:fit];
-    
-    if (usesMultilineHeading) {
-        widthNeededToFitTitle = MAX(tSize.width, sSize.width);
+    if (usesCustomTitleView) {
+        sizeNeededToFitTitle = [_titleView sizeThatFits:fit];
     } else {
-        widthNeededToFitTitle = tSize.width;
+        tSize = [_titleLabel sizeThatFits:fit];
+        sSize = [_subtitleLabel sizeThatFits:fit];
+        
+        if (usesMultilineHeading) {
+            sizeNeededToFitTitle = CGSizeMake(MAX(tSize.width, sSize.width), tSize.height + sSize.height);
+        } else {
+            sizeNeededToFitTitle = tSize;
+        }
     }
     
     // Calculate back button.
@@ -195,7 +203,7 @@
             CGFloat availableTitleBackWidth = CGRectGetWidth(contentRect) - rightCompression - edgeSpacing;
             CGFloat regularBackButtonWidth = [_regularBackButton sizeThatFits:fit].width;
             
-            useRegularBackButton = (regularBackButtonWidth + interSpacing + widthNeededToFitTitle < availableTitleBackWidth);
+            useRegularBackButton = (regularBackButtonWidth + interSpacing + sizeNeededToFitTitle.width < availableTitleBackWidth);
             if (useRegularBackButton) {
                 actualLeftButton = _regularBackButton;
             } else {
@@ -230,31 +238,44 @@
     });
     
     // Align components.
-    CGFloat titleAlignmentHeight = 0.0f;
-    if (usesMultilineHeading) {
-        titleAlignmentHeight = tSize.height + sSize.height;
+    const CGFloat titleAlignmentHeight = sizeNeededToFitTitle.height;
+    
+    CGRect titleLabelRect = CGRectZero;
+    CGRect subtitleLabelRect = CGRectZero;
+    CGRect titleViewRect = CGRectZero;
+    
+    if (usesCustomTitleView) {
+        titleViewRect = (CGRect){
+            .origin.y = ceilf((CGRectGetHeight(bounds) - titleAlignmentHeight) / 2),
+            .size.width = MIN(sizeNeededToFitTitle.width, CGRectGetWidth(titleAlignmentRect)),
+            .size.height = sizeNeededToFitTitle.height
+        };
+        
+        if (((NSInteger)(CGRectGetWidth(bounds) - sizeNeededToFitTitle.width) / 2.0f) > CGRectGetMinX(titleAlignmentRect)) {
+            titleViewRect.origin.x = ceilf((CGRectGetWidth(bounds) - CGRectGetWidth(titleViewRect)) / 2.0f);
+        } else {
+            titleViewRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect) + ((sizeNeededToFitTitle.width - sizeNeededToFitTitle.width) / 2.0f));
+        }
     } else {
-        titleAlignmentHeight = tSize.height;
-    }
-    
-    CGRect titleLabelRect = (CGRect){
-        .origin.y = ceilf((CGRectGetHeight(bounds) - titleAlignmentHeight) / 2),
-        .size.width = MIN(tSize.width, CGRectGetWidth(titleAlignmentRect)),
-        .size.height = tSize.height
-    };
-    
-    CGRect subtitleLabelRect = (CGRect){
-        .origin.y = ceilf(CGRectGetMaxY(titleLabelRect)),
-        .size.width = MIN(sSize.width, CGRectGetWidth(titleAlignmentRect)),
-        .size.height = sSize.height
-    };
-    
-    if (((NSInteger)(CGRectGetWidth(bounds) - widthNeededToFitTitle) / 2.0f) > CGRectGetMinX(titleAlignmentRect)) {
-        titleLabelRect.origin.x = ceilf((CGRectGetWidth(bounds) - CGRectGetWidth(titleLabelRect)) / 2.0f);
-        subtitleLabelRect.origin.x = ceilf((CGRectGetWidth(bounds) - CGRectGetWidth(subtitleLabelRect)) / 2.0f);
-    } else {
-        titleLabelRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect) + ((widthNeededToFitTitle - tSize.width) / 2.0f));
-        subtitleLabelRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect) + ((widthNeededToFitTitle - sSize.width) / 2.0f));
+        titleLabelRect = (CGRect){
+            .origin.y = ceilf((CGRectGetHeight(bounds) - titleAlignmentHeight) / 2),
+            .size.width = MIN(tSize.width, CGRectGetWidth(titleAlignmentRect)),
+            .size.height = tSize.height
+        };
+        
+        subtitleLabelRect = (CGRect){
+            .origin.y = ceilf(CGRectGetMaxY(titleLabelRect)),
+            .size.width = MIN(sSize.width, CGRectGetWidth(titleAlignmentRect)),
+            .size.height = sSize.height
+        };
+        
+        if (((NSInteger)(CGRectGetWidth(bounds) - sizeNeededToFitTitle.width) / 2.0f) > CGRectGetMinX(titleAlignmentRect)) {
+            titleLabelRect.origin.x = ceilf((CGRectGetWidth(bounds) - CGRectGetWidth(titleLabelRect)) / 2.0f);
+            subtitleLabelRect.origin.x = ceilf((CGRectGetWidth(bounds) - CGRectGetWidth(subtitleLabelRect)) / 2.0f);
+        } else {
+            titleLabelRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect) + ((sizeNeededToFitTitle.width - tSize.width) / 2.0f));
+            subtitleLabelRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect) + ((sizeNeededToFitTitle.width - sSize.width) / 2.0f));
+        }
     }
     
     // Background & separator.
@@ -268,21 +289,31 @@
         .top = -20.0f
     });
     
-    // Apply.
+    // Apply computed properties.
+    [CATransaction begin];
+    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
     actualLeftButton.frame = leftButtonRect;
+    [CATransaction commit];
+    
     _rightButton.frame = rightButtonRect;
     _titleLabel.frame = titleLabelRect;
     _subtitleLabel.frame = subtitleLabelRect;
-    _regularBackButton.hidden = !useRegularBackButton || !showsBackButton;
-    _compactBackButton.hidden = useRegularBackButton || !showsBackButton;
+    _titleView.frame = titleViewRect;
+    _titleLabel.hidden = usesCustomTitleView;
+    _subtitleLabel.hidden = usesCustomTitleView;
     _separatorView.frame = separatorRect;
     _backgroundView.frame = backgroundRect;
+    
+    // Use alpha instead of hidden, so clients can get a fade animation when needed.
+    _regularBackButton.alpha = !useRegularBackButton || !showsBackButton ? 0.0f : 1.0f;
+    _compactBackButton.alpha = useRegularBackButton || !showsBackButton ? 0.0f : 1.0f;
     
     // Save configuration.
     _configurationOptions.showsBackButton = showsBackButton;
     _configurationOptions.showsLeftButton = showsLeftButton;
     _configurationOptions.showsBackButton = showsBackButton;
     _configurationOptions.usingRegularBackButton = useRegularBackButton;
+    _configurationOptions.usingCustomTitleView = usesCustomTitleView;
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
@@ -407,6 +438,20 @@
         
         [self _assignFonts];
         [self setNeedsLayout];
+    }
+}
+
+- (void)setTitleView:(UIView *)titleView
+{
+    if (titleView != _titleView) {
+        [_titleView removeFromSuperview];
+        
+        _titleView = titleView;
+        
+        if (titleView) {
+            [self addSubview:titleView];
+            [self setNeedsLayout];
+        }
     }
 }
 

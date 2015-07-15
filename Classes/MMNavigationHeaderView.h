@@ -17,6 +17,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationHeaderAction) {
 
 @property (copy, nonatomic) NSString *title;
 @property (copy, nonatomic) NSString *subtitle;
+@property (strong, nonatomic) UIView *titleView;
 
 @property (copy, nonatomic) NSString *backButtonTitle;
 @property (assign, nonatomic) BOOL hidesBackButton;
