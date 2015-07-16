@@ -254,7 +254,7 @@
         if (((NSInteger)(CGRectGetWidth(bounds) - sizeNeededToFitTitle.width) / 2.0f) > CGRectGetMinX(titleAlignmentRect)) {
             titleViewRect.origin.x = ceilf((CGRectGetWidth(bounds) - CGRectGetWidth(titleViewRect)) / 2.0f);
         } else {
-            titleViewRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect) + ((sizeNeededToFitTitle.width - sizeNeededToFitTitle.width) / 2.0f));
+            titleViewRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect));
         }
     } else {
         titleLabelRect = (CGRect){
