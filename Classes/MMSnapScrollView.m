@@ -51,6 +51,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 @property (assign, nonatomic, getter=isContentSizeInvalidated) BOOL contentSizeInvalidated;
 @property (assign, nonatomic) NSInteger snappedPage;
 @property (assign, nonatomic) NSInteger deferScrollToPage;
+@property (assign, nonatomic) BOOL deferScrollToPageAnimated;
 
 @property (strong, nonatomic) NSMutableDictionary *visibleViewsDictionary;
 @property (strong, nonatomic) NSMutableArray *layoutAttributes;
@@ -273,7 +274,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 
 - (CGRect)_rectForViewAtPage:(NSInteger)page disappearPercent:(CGFloat *)disappearPercent
 {
-    _MMSnapScrollViewLayoutAttributes *layoutAttributes = _layoutAttributes[page];
+    _MMSnapScrollViewLayoutAttributes *layoutAttributes = [self _layoutAttributesForPage:page];
     CGRect rect = [layoutAttributes frame];
     
     CGRect bounds = self.bounds;
@@ -335,7 +336,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 - (void)_validateContentOffset
 {
     if (_deferScrollToPage != NSNotFound) {
-        [self scrollToPage:_deferScrollToPage animated:NO];
+        [self scrollToPage:_deferScrollToPage animated:_deferScrollToPageAnimated];
         _deferScrollToPage = NSNotFound;
     } else {
         // Update scrolling offset accordingly.
@@ -436,15 +437,28 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 
 #pragma mark - Scroll to / insertion / deletion.
 
+- (_MMSnapScrollViewLayoutAttributes *)_layoutAttributesForPage:(NSInteger)page
+{
+    if (page < _numberOfPages) {
+        BOOL hasAttributes = (page < _layoutAttributes.count);
+        if (!hasAttributes) {
+            [self _validateLayout];
+        }
+        return _layoutAttributes[page];
+    }
+    return nil;
+}
+
 - (void)scrollToPage:(NSInteger)page animated:(BOOL)animated
 {
     if (page < _numberOfPages) {
         if (!self.window || _layoutAttributes.count < page) {
             _deferScrollToPage = page;
+            _deferScrollToPageAnimated = animated;
             return;
         }
         
-        _MMSnapScrollViewLayoutAttributes *attributes = _layoutAttributes[page];
+        _MMSnapScrollViewLayoutAttributes *attributes = [self _layoutAttributesForPage:page];
         CGRect frame = attributes.frame;
         
         CGRect bounds = self.bounds;
