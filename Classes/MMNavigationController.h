@@ -259,14 +259,12 @@ typedef NS_ENUM(NSUInteger, MMNavigationScrollMode){
 - (void)navigationControllerWillSnapToViewController:(UIViewController *)viewController;
 
 /**
- *  Called just before the supplementary view is added or removed from a navigation controller.
- *
- *  @param navigationController The navigation controller, or @c nil if there is no view controller.
+ *  Called just before the supplementary view is removed from the navigation controller.
  */
-- (void)willMoveToNavigationController:(MMNavigationController *)navigationController;
+- (void)willMoveFromNavigationController;
 
 /**
- *  Called after the supplementary view is added or removed from a navigation controller.
+ *  Called after the supplementary view is added to the navigation controller.
  */
 - (void)didMoveToNavigationController;
 

@@ -89,19 +89,40 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
         return;
     }
     
+    NSMutableArray *removed = [NSMutableArray array];
     for (UIViewController *vc in _viewControllers) {
-        [vc willMoveToParentViewController:nil];
-        [vc removeFromParentViewController];
+        if (![viewControllers containsObject:vc]) {
+            [removed addObject:vc];
+        }
     }
     
-    [self _removeSupplementaryViewsForViewControllers:_viewControllers];
+    NSMutableArray *inserted = [NSMutableArray array];
+    for (UIViewController *vc in viewControllers) {
+        if (![_viewControllers containsObject:vc]) {
+            [inserted addObject:vc];
+        }
+    }
+    
+    // Supplementary views.
+    [self _removeSupplementaryViewsForViewControllers:removed];
+    [self _insertSupplementaryViewsForViewControllers:inserted];
+    
+    // Begin transaction.
+    [removed makeObjectsPerformSelector:@selector(willMoveToParentViewController:) withObject:nil];
+    [inserted makeObjectsPerformSelector:@selector(willMoveToParentViewController:) withObject:self];
     
     _viewControllers = viewControllers;
+    
+    // End transaction.
+    [removed makeObjectsPerformSelector:@selector(removeFromParentViewController)];
+    [inserted makeObjectsPerformSelector:@selector(didMoveToParentViewController:) withObject:self];
     
     BOOL isViewLoaded = self.isViewLoaded;
     
     for (UIViewController *vc in viewControllers) {
-        [self addChildViewController:vc];
+        if (vc.parentViewController != self) {
+            [self addChildViewController:vc];
+        }
     }
     
     if (isViewLoaded) {
@@ -497,39 +518,52 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
         return nil;
     }
     
-    for (MMNavigationSupplementaryView *view in self.headerFooterViewArray) {
-        if (view._viewType == type && view.viewController == viewController) {
-            return view;
+    MMNavigationSupplementaryView *view = nil;
+    
+    for (MMNavigationSupplementaryView *v in self.headerFooterViewArray.copy) {
+        if (v._viewType == type && v.viewController == viewController) {
+            view = v;
+            break;
         }
     }
     
-    Class viewClass;
-    if (type == MMNavigationViewTypeHeader) {
-        viewClass = self.headerViewClass ?: [MMNavigationHeaderView class];
-    } else if (type == MMNavigationViewTypeFooter) {
-        viewClass = self.footerViewClass ?: [MMNavigationFooterView class];
-    }
-    
-    if (viewClass) {
-        MMNavigationSupplementaryView *view = [[viewClass alloc] initWithFrame:CGRectZero];
+    if (!view) {
+        Class viewClass;
+        if (type == MMNavigationViewTypeHeader) {
+            viewClass = self.headerViewClass ?: [MMNavigationHeaderView class];
+        } else if (type == MMNavigationViewTypeFooter) {
+            viewClass = self.footerViewClass ?: [MMNavigationFooterView class];
+        }
+        
+        view = [[viewClass alloc] initWithFrame:CGRectZero];
         view.navigationController = self;
         view.viewController = viewController;
         view._viewType = type;
         
-        [self.headerFooterViewArray addObject:view];
+        [view didMoveToNavigationController];
         
-        return view;
+        if (view) {
+            [self.headerFooterViewArray addObject:view];
+        }
     }
     
-    return nil;
+    return view;
+}
+
+- (void)_insertSupplementaryViewsForViewControllers:(NSArray *)viewControllers
+{
+    for (MMNavigationSupplementaryView *view in self.headerFooterViewArray.copy) {
+        if ([viewControllers containsObject:view.viewController]) {
+            [view didMoveToNavigationController];
+        }
+    }
 }
 
 - (void)_removeSupplementaryViewsForViewControllers:(NSArray *)viewControllers
 {
     for (MMNavigationSupplementaryView *view in self.headerFooterViewArray.copy) {
         if ([viewControllers containsObject:view.viewController]) {
-            [view setNavigationController:nil];
-            [self.headerFooterViewArray removeObject:view];
+            [view willMoveFromNavigationController];
         }
     }
 }
@@ -617,18 +651,12 @@ static NSString * MMViewControllerVisibleViewControllerKey = @"MMViewControllerV
     
 }
 
-- (void)setNavigationController:(MMNavigationController *)navigationController
+- (void)willMoveToNavigationController:(MMNavigationController *)navigationController
 {
-    if (navigationController != _navigationController) {
-        [self willMoveToNavigationController:navigationController];
-        
-        _navigationController = navigationController;
-        
-        [self didMoveToNavigationController];
-    }
+    
 }
 
-- (void)willMoveToNavigationController:(MMNavigationController *)navigationController
+- (void)willMoveFromNavigationController
 {
     
 }
