@@ -34,6 +34,30 @@
 
 @end
 
+static NSString *_MMElementCategoryPage = @"PageView";
+static NSString *_MMElementCategorySeparator = @"SeparatorView";
+
+typedef NS_ENUM(NSUInteger, _MMSnapScrollViewUpdateAction) {
+    _MMSnapScrollViewUpdateActionReload,
+    _MMSnapScrollViewUpdateActionDelete,
+    _MMSnapScrollViewUpdateActionInsert
+};
+
+@interface _MMSnapScrollViewUpdateItem : NSObject
+
+- (instancetype)initWithUpdateAction:(_MMSnapScrollViewUpdateAction)updateAction forPage:(NSInteger)page;
+
+@property (readonly, nonatomic) _MMSnapScrollViewUpdateAction updateAction;
+
+@property (assign, nonatomic) NSInteger page;
+@property (assign, nonatomic) NSInteger initialPage;
+@property (assign, nonatomic) NSInteger finalPage;
+
+- (NSComparisonResult)comparePages:(_MMSnapScrollViewUpdateItem *)otherItem;
+- (NSComparisonResult)inverseComparePages:(_MMSnapScrollViewUpdateItem *)otherItem;
+
+@end
+
 static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 
 @interface MMSnapScrollView () <UIScrollViewDelegate> {
@@ -52,6 +76,9 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 @property (assign, nonatomic) NSInteger snappedPage;
 @property (assign, nonatomic) NSInteger deferScrollToPage;
 @property (assign, nonatomic) BOOL deferScrollToPageAnimated;
+
+@property (strong, nonatomic) NSMutableDictionary *updates;
+@property (assign, nonatomic, getter=isUpdating) BOOL updating;
 
 @property (strong, nonatomic) NSMutableDictionary *visibleViewsDictionary;
 @property (strong, nonatomic) NSMutableArray *layoutAttributes;
@@ -109,6 +136,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     _snappedPage = NSNotFound;
     _deferScrollToPage = NSNotFound;
     _separatorClassDefinedWidth = _MMStockSnapViewSeparatorWidth;
+    _updates = [NSMutableDictionary dictionary];
     
     // Custom animator for content offset updates.
     _scrollToAnimator = [[MMDecelerationAnimator alloc] initWithTargetScrollView:self];
@@ -306,6 +334,14 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
         return;
     }
     
+    [self _validateLayoutIfNeeded];
+    
+    // Note validation.
+    self.contentSizeInvalidated = NO;
+}
+
+- (void)_validateLayoutIfNeeded
+{
     id dataSource = self.dataSource;
     
     [_layoutAttributes removeAllObjects];
@@ -328,9 +364,6 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     // Update with new content size.
     CGSize contentSize = CGSizeMake(origin, CGRectGetHeight(self.bounds));
     [self _setContentSize:contentSize];
-    
-    // Note validation.
-    self.contentSizeInvalidated = NO;
 }
 
 - (void)_validateContentOffset
@@ -374,6 +407,12 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     [_visibleViewsDictionary.allValues makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [_visibleViewsDictionary removeAllObjects];
     
+    // Enqueue separators.
+    for (UIView <MMSnapViewSeparatorView> *separatorView in _visibleSeparatorsDictionary.allValues) {
+        [self _enqueueSeparatorView:separatorView];
+    }
+    [_visibleSeparatorsDictionary removeAllObjects];
+    
     // Clean snap page.
     _snappedPage = NSNotFound;
     _deferScrollToPage = NSNotFound;
@@ -390,6 +429,18 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     
     [self setContentSizeInvalidated:YES];
     [self setNeedsLayout];
+}
+
+- (_MMSnapScrollViewLayoutAttributes *)_layoutAttributesForPage:(NSInteger)page
+{
+    if (page < _numberOfPages) {
+        BOOL hasAttributes = (page < _layoutAttributes.count);
+        if (!hasAttributes) {
+            [self _validateLayout];
+        }
+        return _layoutAttributes[page];
+    }
+    return nil;
 }
 
 #pragma mark - Separator views.
@@ -435,19 +486,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     }
 }
 
-#pragma mark - Scroll to / insertion / deletion.
-
-- (_MMSnapScrollViewLayoutAttributes *)_layoutAttributesForPage:(NSInteger)page
-{
-    if (page < _numberOfPages) {
-        BOOL hasAttributes = (page < _layoutAttributes.count);
-        if (!hasAttributes) {
-            [self _validateLayout];
-        }
-        return _layoutAttributes[page];
-    }
-    return nil;
-}
+#pragma mark - Scroll to.
 
 - (void)scrollToPage:(NSInteger)page animated:(BOOL)animated
 {
@@ -481,107 +520,220 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     }
 }
 
-- (void)insertPages:(NSIndexSet *)insertedPages animated:(BOOL)animated
+#pragma mark - Batch operations.
+
+- (void)reloadPages:(NSIndexSet *)pages animated:(BOOL)animated
 {
-    if (insertedPages.count == 0) {
-        return;
-    }
-    
-    const NSUInteger numberOfPagesBeforeUpdate = _numberOfPages;
-    const NSUInteger numberOfPagesRequiredAfterUpdate = numberOfPagesBeforeUpdate + insertedPages.count;
-    
-    _numberOfPages = [self.dataSource numberOfPagesInScrollView:self];
-    
-    if (numberOfPagesBeforeUpdate != numberOfPagesRequiredAfterUpdate) {
-        [NSException raise:@"Invalid number of pages" format:@"attempt to insert (%ld) pages (there are only %ld pages after the update)", (long)insertedPages.count, (long)_numberOfPages];
-    }
-    
-    // Invalidate the layout.
-    [self invalidateLayout];
-    
-    // Perform layout.
-    [self layoutIfNeeded];
-    
-    // If animated, let's fade in the new views that are now visible.
-    if (animated) {
-        NSIndexSet *visiblePages = self.pagesForVisibleViews;
-        NSMutableSet *viewsToFade = [NSMutableSet setWithCapacity:insertedPages.count];
-        
-        [insertedPages enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-            NSUInteger page = idx;
-            if ([visiblePages containsIndex:page]) {
-                UIView *view = [self viewAtPage:page];
-                if (view) {
-                    [viewsToFade addObject:view];
-                }
-            }
-        }];
-        
-        if (viewsToFade.count > 0) {
-            for (UIView *view in viewsToFade) {
-                [view setAlpha:0.0f];
-            }
-            
-            [UIView animateWithDuration:0.25f animations:^{
-                for (UIView *view in viewsToFade) {
-                    [view setAlpha:1.0f];
-                }
-            }];
-        }
-    }
+    [self _updatePages:pages withAction:_MMSnapScrollViewUpdateActionReload animated:animated];
+}
+
+- (void)insertPages:(NSIndexSet *)pages animated:(BOOL)animated
+{
+    [self _updatePages:pages withAction:_MMSnapScrollViewUpdateActionInsert animated:animated];
 }
 
 - (void)deletePages:(NSIndexSet *)pages animated:(BOOL)animated
+{
+    [self _updatePages:pages withAction:_MMSnapScrollViewUpdateActionDelete animated:animated];
+}
+
+- (void)_updatePages:(NSIndexSet *)pages withAction:(_MMSnapScrollViewUpdateAction)action animated:(BOOL)animated
 {
     if (pages.count == 0) {
         return;
     }
     
-    const NSUInteger numberOfPagesBeforeUpdate = _numberOfPages;
-    const NSUInteger numberOfPagesRequiredAfterUpdate = numberOfPagesBeforeUpdate - pages.count;
-    
-    _numberOfPages = [self.dataSource numberOfPagesInScrollView:self];
-    
-    if (numberOfPagesBeforeUpdate != numberOfPagesRequiredAfterUpdate) {
-        [NSException raise:@"Invalid number of pages" format:@"attempt to delete (%ld) pages (there are only %ld pages after the update)", (long)pages.count, (long)_numberOfPages];
+    BOOL updating = self.isUpdating;
+    if (!updating) {
+        [self _beginUpdates];
     }
     
-    // Invalidate the layout.
-    [self invalidateLayout];
+    NSMutableArray *updates = [self _updatesArrayForAction:action];
     
-    // Let a layout cycle perform the layout if animations are not required. A regular layout cycle would
-    // remove views immediately so animations wouldn't be possible.
-    
-    NSMutableSet *removedViews = [NSMutableSet setWithCapacity:pages.count];
-    NSMutableDictionary *visibleViewsDictionary = self.visibleViewsDictionary;
-    
-    [visibleViewsDictionary enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        NSInteger page = [key integerValue];
-        UIView *view = obj;
-        
-        if ([pages containsIndex:page]) {
-            [self sendSubviewToBack:view];
-            [removedViews addObject:view];
-        }
+    [pages enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        _MMSnapScrollViewUpdateItem *update = [[_MMSnapScrollViewUpdateItem alloc] initWithUpdateAction:action forPage:idx];
+        [updates addObject:update];
     }];
     
-    [visibleViewsDictionary removeObjectsForKeys:pages.array];
-    [self.layoutAttributes removeObjectsAtIndexes:pages];
-    
-    if (animated) {
-        [_viewsToRemoveAfterScrollAnimation unionSet:removedViews];
-        
-        // Scroll to last available page.
-        [self scrollToPage:(self.numberOfPages - 1) animated:YES];
-        
-        // If animation is not taking place, removed views right now.
-        if (!self.decelerating) {
-            [self _removeQueuedViewsToRemove];
-        }
-    } else {
-        [removedViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-        [self layoutIfNeeded];
+    if (!updating) {
+        [self _endUpdatesAnimated:animated];
     }
+}
+
+- (void)performBatchUpdates:(dispatch_block_t)updates completion:(void (^)(BOOL))completion
+{
+    NSParameterAssert(updates);
+    
+    [self _beginUpdates];
+    
+    updates();
+    
+    BOOL didUpdate = [self _endUpdatesAnimated:YES];
+    
+    if (completion) {
+        completion(didUpdate);
+    }
+}
+
+- (void)_beginUpdates
+{
+    if (self.isUpdating) {
+        return;
+    }
+    
+    self.updating = YES;
+}
+
+- (BOOL)_endUpdatesAnimated:(BOOL)animated
+{
+    NSArray *removeUpdateItems = [[self _updatesArrayForAction:_MMSnapScrollViewUpdateActionDelete]
+                                  sortedArrayUsingSelector:@selector(inverseComparePages:)];
+    
+    NSArray *insertUpdateItems = [[self _updatesArrayForAction:_MMSnapScrollViewUpdateActionInsert]
+                                  sortedArrayUsingSelector:@selector(comparePages:)];
+    
+    NSMutableArray *layoutUpdateItems = [NSMutableArray array];
+    [layoutUpdateItems addObjectsFromArray:removeUpdateItems];
+    [layoutUpdateItems addObjectsFromArray:insertUpdateItems];
+    
+    NSArray *categories = @[ _MMElementCategoryPage, _MMElementCategorySeparator ];
+    NSMutableDictionary *newVisibleViews = [NSMutableDictionary dictionaryWithCapacity:categories.count];
+    for (NSString *category in categories) {
+        newVisibleViews[category] = [self _orderedViewsWithElementCategory:category].mutableCopy;
+    }
+    
+    for (_MMSnapScrollViewUpdateItem *updateItem in layoutUpdateItems) {
+        for (NSMutableArray *array in newVisibleViews.allValues) {
+            switch (updateItem.updateAction) {
+                case _MMSnapScrollViewUpdateActionDelete:
+                    [array removeObjectAtIndex:updateItem.initialPage];
+                    break;
+                case _MMSnapScrollViewUpdateActionInsert:
+                    [array insertObject:[NSNull null] atIndex:updateItem.finalPage];
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    
+    // Update number of pages.
+    const NSInteger numberOfPages = (_numberOfPages - removeUpdateItems.count + insertUpdateItems.count);
+    
+    // Assert if data source is wrong.
+    if (numberOfPages != [_dataSource numberOfPagesInScrollView:self]) {
+        [NSException raise:@"invalid number of pages" format:@"attempt to insert (%lu) and delete (%lu) pages, but there are only %ld pages after the update.", (unsigned long)insertUpdateItems.count, (unsigned long)removeUpdateItems.count, (long)_numberOfPages];
+    }
+    
+    _numberOfPages = numberOfPages;
+    
+    // Validate layout.
+    [self _validateLayoutIfNeeded];
+    
+    // Update visible views dict.
+    NSMutableSet *viewsToRemove = [NSMutableSet set];
+    
+    [newVisibleViews enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        NSString *category = key;
+        NSArray *array = obj;
+        
+        NSMutableDictionary *dict = nil;
+        if ([category isEqualToString:_MMElementCategoryPage]) {
+            dict = _visibleViewsDictionary;
+        } else if ([category isEqualToString:_MMElementCategorySeparator]) {
+            dict = _visibleSeparatorsDictionary;
+        }
+        
+        // Snapshot before.
+        NSSet *visibleViewsBeforeUpdate = [NSSet setWithArray:dict.allValues];
+        
+        // Remove existing entries.
+        [dict removeAllObjects];
+        
+        // Update with new order.
+        [array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            UIView *view = (obj != [NSNull null]) ? obj : nil;
+            NSInteger page = idx;
+            
+            if (view) {
+                [dict setObject:view forKey:@(page)];
+            }
+        }];
+        
+        // Remove what's left.
+        NSMutableSet *unused = visibleViewsBeforeUpdate.mutableCopy;
+        [unused minusSet:[NSSet setWithArray:dict.allValues]];
+        
+        [viewsToRemove unionSet:unused];
+    }];
+    
+    // Animate views.
+    if (viewsToRemove.count > 0) {
+        NSTimeInterval duration = (animated ? 0.25 : 0);
+        
+        [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^{
+            for (UIView *view in viewsToRemove) {
+                [view setAlpha:0.0f];
+            }
+        } completion:^(BOOL finished) {
+            for (UIView *view in viewsToRemove) {
+                [view removeFromSuperview];
+                [view setAlpha:1.0f];
+                
+                if ([view conformsToProtocol:@protocol(MMSnapViewSeparatorView)]) {
+                    [self _enqueueSeparatorView:(UIView <MMSnapViewSeparatorView> *)view];
+                }
+            }
+        }];
+    }
+    
+    // Layout.
+    [self setNeedsLayout];
+    
+    // Clear the updates.
+    [self.updates removeAllObjects];
+    
+    // Set flag.
+    self.updating = NO;
+    
+    return (layoutUpdateItems.count > 0);
+}
+
+- (NSArray *)_orderedViewsWithElementCategory:(NSString *)elementCategory
+{
+    NSDictionary *storage = nil;
+    if ([elementCategory isEqualToString:_MMElementCategoryPage]) {
+        storage = _visibleViewsDictionary;
+    } else if ([elementCategory isEqualToString:_MMElementCategorySeparator]) {
+        storage = _visibleSeparatorsDictionary;
+    }
+    
+    if (storage.count > 0) {
+        const NSInteger numberOfPages = _numberOfPages;
+        
+        NSMutableArray *array = [NSMutableArray arrayWithCapacity:numberOfPages];
+        for (NSUInteger page = 0; page < numberOfPages; page++) {
+            id key = @(page);
+            [array addObject:storage[key] ?: [NSNull null]];
+        }
+        return array;
+    } else {
+        return [NSArray array];
+    }
+}
+
+- (NSMutableArray *)_updatesArrayForAction:(_MMSnapScrollViewUpdateAction)action
+{
+    id key = @(action);
+    
+    NSMutableArray *array = _updates[key];
+    if (!array) {
+        array = [NSMutableArray array];
+        
+        _updates[key] = array;
+    }
+    
+    return array;
 }
 
 #pragma mark - Boilerplate.
@@ -1123,6 +1275,80 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     }
     
     return nil;
+}
+
+@end
+
+@implementation _MMSnapScrollViewUpdateItem
+
+- (instancetype)initWithUpdateAction:(_MMSnapScrollViewUpdateAction)updateAction forPage:(NSInteger)page
+{
+    self = [super init];
+    if (self) {
+        if (updateAction == _MMSnapScrollViewUpdateActionInsert)
+            return [self initWithInitialPage:NSNotFound finalPage:page updateAction:updateAction];
+        else if (updateAction == _MMSnapScrollViewUpdateActionDelete)
+            return [self initWithInitialPage:page finalPage:NSNotFound updateAction:updateAction];
+        else if (updateAction == _MMSnapScrollViewUpdateActionReload)
+            return [self initWithInitialPage:page finalPage:page updateAction:updateAction];
+    }
+    return self;
+}
+
+- (id)initWithInitialPage:(NSInteger)initialPage finalPage:(NSInteger)finalPage updateAction:(_MMSnapScrollViewUpdateAction)updateAction
+{
+    self = [super init];
+    if (self) {
+        _initialPage = initialPage;
+        _finalPage = finalPage;
+        _updateAction = updateAction;
+    }
+    return self;
+}
+
+- (NSInteger)page
+{
+    return _initialPage;
+}
+
+- (NSComparisonResult)comparePages:(_MMSnapScrollViewUpdateItem *)otherItem
+{
+    NSNumber *selfIndex = nil;
+    NSNumber *otherIndex = nil;
+    
+    switch (_updateAction) {
+        case _MMSnapScrollViewUpdateActionInsert:
+            selfIndex = @(_finalPage);
+            otherIndex = @([otherItem initialPage]);
+            break;
+        case _MMSnapScrollViewUpdateActionDelete:
+            selfIndex = @(_initialPage);
+            otherIndex = @([otherItem page]);
+        default: break;
+    }
+    
+    return [selfIndex compare:otherIndex];
+}
+
+- (NSComparisonResult)inverseComparePages:(_MMSnapScrollViewUpdateItem *)otherItem
+{
+    return (NSComparisonResult)([self comparePages:otherItem] * -1);
+}
+
+- (NSString *)description
+{
+    const _MMSnapScrollViewUpdateAction update = _updateAction;
+    const NSInteger page = _page;
+    
+    NSString *action = nil;
+    if (update == _MMSnapScrollViewUpdateActionReload) {
+        action = @"Reload";
+    } else if (update == _MMSnapScrollViewUpdateActionInsert) {
+        action = @"Insert";
+    } else if (update == _MMSnapScrollViewUpdateActionDelete) {
+        action = @"Delete";
+    }
+    return [NSString stringWithFormat:@"<%@: %p> action: %@, page: %@", self.class, self, action, @(page)];
 }
 
 @end

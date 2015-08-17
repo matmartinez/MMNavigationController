@@ -89,19 +89,20 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
         return;
     }
     
-    NSMutableArray *removed = [NSMutableArray array];
-    for (UIViewController *vc in _viewControllers) {
-        if (![viewControllers containsObject:vc]) {
-            [removed addObject:vc];
-        }
-    }
+    NSIndexSet *removedIndexes = [_viewControllers indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        UIViewController *vc = obj;
+        
+        return ![viewControllers containsObject:vc];
+    }];
     
-    NSMutableArray *inserted = [NSMutableArray array];
-    for (UIViewController *vc in viewControllers) {
-        if (![_viewControllers containsObject:vc]) {
-            [inserted addObject:vc];
-        }
-    }
+    NSIndexSet *insertedIndexes = [viewControllers indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        UIViewController *vc = obj;
+        
+        return ![_viewControllers containsObject:vc];
+    }];
+    
+    NSArray *inserted = [viewControllers objectsAtIndexes:insertedIndexes];
+    NSArray *removed = [_viewControllers objectsAtIndexes:removedIndexes];
     
     // Supplementary views.
     [self _removeSupplementaryViewsForViewControllers:removed];
@@ -125,9 +126,16 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
         }
     }
     
+    // Update the UI.
     if (isViewLoaded) {
-        [self.scrollView reloadData];
-        [self _notifyViewControllersDidChange];
+        [self.scrollView performBatchUpdates:^{
+            [self.scrollView deletePages:removedIndexes animated:YES];
+            [self.scrollView insertPages:insertedIndexes animated:YES];
+        } completion:^(BOOL changesWereMade) {
+            if (changesWereMade) {
+                [self _notifyViewControllersDidChange];
+            }
+        }];
     }
 }
 
@@ -372,7 +380,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     const CGRect bounds = self.view.bounds;
     
     if (_delegateFlags.delegateCustomWidthForViewController) {
-        UIViewController *viewController = self.viewControllers[page];
+        UIViewController *viewController = [self _viewControllerAtPage:page];
         
         const MMViewControllerMetrics metrics = [self.delegate navigationController:self metricsForViewController:viewController];
         
@@ -414,7 +422,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 - (UIView *)scrollView:(MMSnapScrollView *)scrollView viewAtPage:(NSInteger)page
 {
-    return [self.viewControllers[page] view];
+    return [self _viewControllerAtPage:page].view;
 }
 
 - (NSInteger)numberOfPagesInScrollView:(MMSnapScrollView *)scrollView
@@ -426,7 +434,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 - (void)scrollView:(MMSnapScrollView *)scrollView willDisplayView:(UIView *)view atPage:(NSInteger)page
 {
-    UIViewController *viewController = self.viewControllers[page];
+    UIViewController *viewController = [self _viewControllerAtPage:page];
     if (viewController) {
         [viewController beginAppearanceTransition:YES animated:(scrollView.isDecelerating || scrollView.isTracking)];
         [viewController endAppearanceTransition];
@@ -446,7 +454,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 - (void)scrollView:(MMSnapScrollView *)scrollView didEndDisplayingView:(UIView *)view atPage:(NSInteger)page
 {
-    UIViewController *viewController = self.viewControllers[page];
+    UIViewController *viewController = [self _viewControllerAtPage:page];
     if (viewController) {
         [viewController beginAppearanceTransition:NO animated:(scrollView.isDecelerating || scrollView.isTracking)];
         [viewController endAppearanceTransition];
@@ -459,7 +467,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 - (void)scrollView:(MMSnapScrollView *)scrollView willSnapToView:(UIView *)view atPage:(NSInteger)page
 {
-    UIViewController *viewController = self.viewControllers[page];
+    UIViewController *viewController = [self _viewControllerAtPage:page];
     if (viewController) {
         if (_delegateFlags.delegateWillSnapViewController) {
             [self.delegate navigationController:self willSnapToViewController:viewController];
@@ -473,7 +481,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 - (void)scrollView:(MMSnapScrollView *)scrollView didSnapToView:(UIView *)view atPage:(NSInteger)page
 {
-    UIViewController *viewController = self.viewControllers[page];
+    UIViewController *viewController = [self _viewControllerAtPage:page];
     if (_delegateFlags.delegateDidSnapViewController) {
         [self.delegate navigationController:self didSnapToViewController:viewController];
     }
@@ -573,6 +581,16 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     for (MMNavigationSupplementaryView *view in self.headerFooterViewArray.copy) {
         [view navigationControllerViewControllersDidChange];
     }
+}
+
+#pragma mark - Getter.
+
+- (UIViewController *)_viewControllerAtPage:(NSInteger)page
+{
+    if (page < self.viewControllers.count) {
+        return self.viewControllers[page];
+    }
+    return nil;
 }
 
 @end

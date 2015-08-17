@@ -197,6 +197,14 @@
  */
 @property (strong, nonatomic) Class separatorViewClass;
 
+/**
+ *  Animates multiple insert and delete operations as a group.
+ *
+ *  @param updates    The block that performs the relevant insert or delete operations.
+ *  @param completion A completion handler block to execute when all of the operations are finished. This block takes a single Boolean parameter that contains the value @c YES if all of the related animations completed successfully or @c NO if they were interrupted. This parameter may be @c nil.
+ */
+- (void)performBatchUpdates:(dispatch_block_t)updates completion:(void (^)(BOOL))completion;
+
 @end
 
 @protocol MMSnapViewSeparatorView <NSObject>
