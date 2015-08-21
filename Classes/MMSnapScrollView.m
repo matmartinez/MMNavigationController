@@ -708,18 +708,15 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
         storage = _visibleSeparatorsDictionary;
     }
     
-    if (storage.count > 0) {
-        const NSInteger numberOfPages = _numberOfPages;
-        
-        NSMutableArray *array = [NSMutableArray arrayWithCapacity:numberOfPages];
-        for (NSUInteger page = 0; page < numberOfPages; page++) {
-            id key = @(page);
-            [array addObject:storage[key] ?: [NSNull null]];
-        }
-        return array;
-    } else {
-        return [NSArray array];
+    const NSInteger numberOfPages = _numberOfPages;
+    
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:numberOfPages];
+    for (NSUInteger page = 0; page < numberOfPages; page++) {
+        id key = @(page);
+        [array addObject:storage[key] ?: [NSNull null]];
     }
+    
+    return array;
 }
 
 - (NSMutableArray *)_updatesArrayForAction:(_MMSnapScrollViewUpdateAction)action
