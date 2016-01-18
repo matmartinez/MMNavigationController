@@ -152,6 +152,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     [self setShowsHorizontalScrollIndicator:NO];
     [self setShowsVerticalScrollIndicator:NO];
     [self setAlwaysBounceHorizontal:YES];
+    [self setAlwaysBounceVertical:NO];
     [self setScrollsToTop:NO];
     
     // Don't delay touches.
@@ -346,9 +347,10 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     
     [_layoutAttributes removeAllObjects];
     
+    CGRect rect = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
+    
     CGFloat origin = 0;
     for (NSInteger idx = 0; idx < _numberOfPages; idx++) {
-        CGRect rect = self.bounds;
         rect.origin.y = 0;
         rect.origin.x = origin;
         rect.size.width = [dataSource scrollView:self widthForViewAtPage:idx];
@@ -362,7 +364,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     }
     
     // Update with new content size.
-    CGSize contentSize = CGSizeMake(origin, CGRectGetHeight(self.bounds));
+    CGSize contentSize = CGSizeMake(origin, CGRectGetHeight(rect));
     [self _setContentSize:contentSize];
 }
 
@@ -791,6 +793,15 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 - (void)_setContentSize:(CGSize)contentSize
 {
     [super setContentSize:contentSize];
+}
+
+- (void)setContentInset:(UIEdgeInsets)contentInset
+{
+    if (!UIEdgeInsetsEqualToEdgeInsets(contentInset, self.contentInset)) {
+        self.contentSizeInvalidated = YES;
+        
+        [super setContentInset:contentInset];
+    }
 }
 
 - (void)setPagingEnabled:(BOOL)pagingEnabled
