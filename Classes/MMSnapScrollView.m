@@ -801,6 +801,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
         self.contentSizeInvalidated = YES;
         
         [super setContentInset:contentInset];
+        [self setNeedsLayout];
     }
 }
 
