@@ -35,6 +35,8 @@
 
 @implementation MMNavigationHeaderView
 
+#define UIKitLocalizedString(key) [[NSBundle bundleWithIdentifier:@"com.apple.UIKit"] localizedStringForKey:key value:@"" table:nil]
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -81,6 +83,7 @@
         UIButton *compactBackButton = [UIButton buttonWithType:UIButtonTypeSystem];
         
         UIImage *backButtonImage = [[UIImage imageNamed:@"MMNavigationBackIndicatorDefault.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        backButtonImage.accessibilityLabel = UIKitLocalizedString(@"Back");
         
         for (UIButton *backButton in @[ regularBackButton, compactBackButton ]) {
             [backButton setImage:backButtonImage forState:UIControlStateNormal];
