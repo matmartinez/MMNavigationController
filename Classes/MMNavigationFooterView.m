@@ -153,6 +153,17 @@ static const NSString *MMNavigationFooterInfoSizeKey = @"Size";
         }
     }
     
+    // Hide items that won't fit.
+    for (id item in items) {
+        if ([item isKindOfClass:[UIView class]]) {
+            NSUInteger idx = [itemsToLayout indexOfObjectPassingTest:^BOOL(NSDictionary *info, NSUInteger idx, BOOL *stop) {
+                return (info[MMNavigationFooterInfoObjectKey] == item);
+            }];
+            
+            [item setHidden:(idx == NSNotFound)];
+        }
+    }
+    
     const CGFloat separatorHeight = 1.0f / [UIScreen mainScreen].scale;
     
     CGRect separatorRect = (CGRect){
