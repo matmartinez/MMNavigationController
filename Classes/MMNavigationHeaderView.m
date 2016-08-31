@@ -28,6 +28,8 @@
 
 @property (readonly, nonatomic) BOOL pagingEnabled;
 @property (assign, nonatomic) BOOL rotatesBackButton;
+@property (assign, nonatomic) CGFloat edgeSpacing;
+@property (assign, nonatomic) CGFloat interSpacing;
 
 @property (strong, nonatomic) UIView *separatorView;
 
@@ -42,6 +44,14 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.clipsToBounds = NO;
+        
+        // Metrics.
+        if (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_9_4) {
+            _edgeSpacing = 16.0f;
+        } else {
+            _edgeSpacing = 8.0f;
+        }
+        _interSpacing = 5.0;
         
         // Defaults.
         _separatorColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
@@ -154,9 +164,8 @@
 {
     [super layoutSubviews];
     
-    static const CGFloat edgeSpacing = 8.0f;
-    static const CGFloat interSpacing = 5.0;
-    
+    const CGFloat edgeSpacing = _edgeSpacing;
+    const CGFloat interSpacing = _interSpacing;
     const CGRect bounds = (CGRect){ .size = self.bounds.size };
     const CGRect contentRect = CGRectInset(bounds, edgeSpacing, 0);
     
