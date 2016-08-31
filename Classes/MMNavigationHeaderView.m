@@ -28,8 +28,9 @@
 
 @property (readonly, nonatomic) BOOL pagingEnabled;
 @property (assign, nonatomic) BOOL rotatesBackButton;
-@property (assign, nonatomic) CGFloat edgeSpacing;
 @property (assign, nonatomic) CGFloat interSpacing;
+@property (assign, nonatomic) CGFloat barButtonSpacing;
+@property (assign, nonatomic) CGFloat backButtonSpacing;
 
 @property (strong, nonatomic) UIView *separatorView;
 
@@ -46,11 +47,13 @@
         self.clipsToBounds = NO;
         
         // Metrics.
-        const BOOL UINavigationBarUsesLongerEdges = NO;
 #ifdef NSFoundationVersionNumber_iOS_9_4
-        UINavigationBarUsesLongerEdges = (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_9_4);
+        const BOOL UINavigationBarUsesLongerEdges = (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_9_4);
+#elif
+        const BOOL UINavigationBarUsesLongerEdges = NO;
 #endif
-        _edgeSpacing = UINavigationBarUsesLongerEdges ? 16.0f : 8.0f;
+        _backButtonSpacing = 8.0f;
+        _barButtonSpacing = UINavigationBarUsesLongerEdges ? 16.0f : 8.0f;
         _interSpacing = 5.0;
         
         // Defaults.
@@ -164,12 +167,9 @@
 {
     [super layoutSubviews];
     
-    const CGFloat edgeSpacing = _edgeSpacing;
+    const CGFloat backEdgeSpacing = _backButtonSpacing;
+    const CGFloat edgeSpacing = _barButtonSpacing;
     const CGFloat interSpacing = _interSpacing;
-    const CGRect bounds = (CGRect){ .size = self.bounds.size };
-    const CGRect contentRect = CGRectInset(bounds, edgeSpacing, 0);
-    
-    const CGSize fit = contentRect.size;
     
     // Rects to calculate.
     UIView *actualLeftButton = nil;
@@ -184,6 +184,17 @@
     BOOL showsBackButton = !isHiddenInLastColumn && !showsLeftButton && !_hidesBackButton && _backActionAvailable;
     BOOL usesMultilineHeading = _configurationOptions.usingMultilineHeading;
     BOOL usesCustomTitleView = _titleView != nil;
+    
+    UIEdgeInsets contentInset;
+    if (showsBackButton) {
+        contentInset = (UIEdgeInsets){ .left = backEdgeSpacing, .right = edgeSpacing };
+    } else {
+        contentInset = (UIEdgeInsets){ .left = edgeSpacing, .right = edgeSpacing };
+    }
+    
+    const CGRect bounds = (CGRect){ .size = self.bounds.size };
+    const CGRect contentRect = UIEdgeInsetsInsetRect(bounds, contentInset);
+    const CGSize fit = contentRect.size;
     
     // Calculate title width.
     CGSize sizeNeededToFitTitle = CGSizeZero;
