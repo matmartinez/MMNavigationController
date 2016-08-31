@@ -46,11 +46,11 @@
         self.clipsToBounds = NO;
         
         // Metrics.
-        if (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_9_4) {
-            _edgeSpacing = 16.0f;
-        } else {
-            _edgeSpacing = 8.0f;
-        }
+        const BOOL UINavigationBarUsesLongerEdges = NO;
+#ifdef NSFoundationVersionNumber_iOS_9_4
+        UINavigationBarUsesLongerEdges = (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_9_4);
+#endif
+        _edgeSpacing = UINavigationBarUsesLongerEdges ? 16.0f : 8.0f;
         _interSpacing = 5.0;
         
         // Defaults.
