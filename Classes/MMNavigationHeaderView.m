@@ -49,7 +49,7 @@
         // Metrics.
 #ifdef NSFoundationVersionNumber_iOS_9_4
         const BOOL UINavigationBarUsesLongerEdges = (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_9_4);
-#elif
+#else
         const BOOL UINavigationBarUsesLongerEdges = NO;
 #endif
         _backButtonSpacing = 8.0f;
