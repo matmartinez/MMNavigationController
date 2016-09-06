@@ -40,6 +40,9 @@
 
 #define UIKitLocalizedString(key) [[NSBundle bundleWithIdentifier:@"com.apple.UIKit"] localizedStringForKey:key value:@"" table:nil]
 
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v) \
+([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -47,11 +50,8 @@
         self.clipsToBounds = NO;
         
         // Metrics.
-#ifdef NSFoundationVersionNumber_iOS_9_4
-        const BOOL UINavigationBarUsesLongerEdges = (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_9_4);
-#else
-        const BOOL UINavigationBarUsesLongerEdges = NO;
-#endif
+        const BOOL UINavigationBarUsesLongerEdges = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0");
+        
         _backButtonSpacing = 8.0f;
         _barButtonSpacing = UINavigationBarUsesLongerEdges ? 16.0f : 8.0f;
         _interSpacing = 5.0;
