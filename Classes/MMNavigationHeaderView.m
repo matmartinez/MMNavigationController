@@ -50,10 +50,8 @@
         self.clipsToBounds = NO;
         
         // Metrics.
-        const BOOL UINavigationBarUsesLongerEdges = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0");
-        
         _backButtonSpacing = 8.0f;
-        _barButtonSpacing = UINavigationBarUsesLongerEdges ? 16.0f : 8.0f;
+        _barButtonSpacing = 8.0f;
         _interSpacing = 5.0;
         
         // Defaults.
@@ -167,9 +165,18 @@
 {
     [super layoutSubviews];
     
+    const CGRect bounds = (CGRect){ .size = self.bounds.size };
+    
     const CGFloat backEdgeSpacing = _backButtonSpacing;
-    const CGFloat edgeSpacing = _barButtonSpacing;
     const CGFloat interSpacing = _interSpacing;
+    
+    CGFloat edgeSpacing = _barButtonSpacing;
+    
+    if ([self.class _UINavigationBarDoubleEdgesRequired]) {
+        if (CGRectGetWidth(bounds) > [self.class _UINavigationBarDoubleEdgesThreshold]) {
+            edgeSpacing *= 2.0f;
+        }
+    }
     
     // Rects to calculate.
     UIView *actualLeftButton = nil;
@@ -192,7 +199,6 @@
         contentInset = (UIEdgeInsets){ .left = edgeSpacing, .right = edgeSpacing };
     }
     
-    const CGRect bounds = (CGRect){ .size = self.bounds.size };
     const CGRect contentRect = UIEdgeInsetsInsetRect(bounds, contentInset);
     const CGSize fit = contentRect.size;
     
@@ -567,6 +573,23 @@
             [textLabel setShadowOffset:textShadow.shadowOffset];
         }
     }];
+}
+
+#pragma mark - UIKit compatibility.
+
++ (BOOL)_UINavigationBarDoubleEdgesRequired
+{
+    static BOOL supported;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        supported = SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0");
+    });
+    return supported;
+}
+
++ (CGFloat)_UINavigationBarDoubleEdgesThreshold
+{
+    return 320.0f;
 }
 
 @end
