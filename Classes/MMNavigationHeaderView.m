@@ -374,6 +374,8 @@
         BOOL firstVisibleViewController = (self.navigationController.visibleViewControllers.firstObject == self.viewController);
         
         [self setRotatesBackButton:!firstVisibleViewController];
+    } else {
+        [self setRotatesBackButton:NO];
     }
 }
 
@@ -381,6 +383,8 @@
 {
     if (!self.pagingEnabled) {
         [self setRotatesBackButton:(viewController != self.viewController)];
+    } else {
+        [self setRotatesBackButton:NO];
     }
 }
 
