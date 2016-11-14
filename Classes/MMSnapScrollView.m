@@ -908,8 +908,8 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     id <MMSnapScrollViewDelegate> delegate = self.delegate;
     
     CGRect proposedRect = self.bounds;
-    proposedRect.origin.x = MIN(targetContentOffset.x, self.contentSize.width - CGRectGetWidth(proposedRect));
-    proposedRect.origin.y = targetContentOffset.y;
+    proposedRect.origin.x = MIN(ceil(targetContentOffset.x), self.contentSize.width - CGRectGetWidth(proposedRect));
+    proposedRect.origin.y = ceil(targetContentOffset.y);
     
     NSUInteger page = [self pagesForViewsInRect:proposedRect].firstIndex;
     UIView *view = [self viewAtPage:page];
