@@ -373,6 +373,12 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     [self _configureScrollViewWithTraitCollection:newCollection transitionCoordinator:coordinator];
 }
 
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
+{
+    [super traitCollectionDidChange:previousTraitCollection];
+    [self _configureScrollViewWithTraitCollection:self.traitCollection];
+}
+
 #pragma mark - Snap scroll view data source.
 
 - (CGFloat)scrollView:(MMSnapScrollView *)scrollView widthForViewAtPage:(NSInteger)page
