@@ -492,6 +492,8 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 
 - (void)scrollToPage:(NSInteger)page animated:(BOOL)animated
 {
+    animated = animated && [UIView areAnimationsEnabled];
+    
     if (page < _numberOfPages) {
         if (!self.window || _layoutAttributes.count < page) {
             _deferScrollToPage = page;
