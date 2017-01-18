@@ -49,7 +49,8 @@
     if (!self.displayLink) {
         self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateContentOffset:)];
         self.displayLink.frameInterval = 1;
-        [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        
+        [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     } else {
         self.displayLink.paused = NO;
     }
