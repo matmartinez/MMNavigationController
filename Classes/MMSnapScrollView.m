@@ -646,6 +646,8 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
             dict = _visibleViewsDictionary;
         } else if ([category isEqualToString:_MMElementCategorySeparator]) {
             dict = _visibleSeparatorsDictionary;
+        } else {
+            [[NSException exceptionWithName:NSInternalInconsistencyException reason:[NSString stringWithFormat:@"Invalid element category named `%@`", category] userInfo:nil] raise];
         }
         
         // Snapshot before.
