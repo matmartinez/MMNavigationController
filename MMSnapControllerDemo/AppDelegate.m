@@ -1,16 +1,16 @@
 //
 //  AppDelegate.m
-//  MMNavigationController
+//  MMSnapController
 //
 //  Created by Matías Martínez on 1/11/15.
 //  Copyright (c) 2015 Matías Martínez. All rights reserved.
 //
 
 #import "AppDelegate.h"
-#import "MMNavigationController.h"
+#import "MMSnapController.h"
 #import "ViewController.h"
 
-@interface AppDelegate () <MMNavigationControllerDelegate>
+@interface AppDelegate () <MMSnapControllerDelegate>
 
 @end
 
@@ -30,11 +30,11 @@
         [viewControllers addObject:vc];
     }
     
-    MMNavigationController *navigationController = [[MMNavigationController alloc] initWithViewControllers:viewControllers];
-    navigationController.delegate = self;
+    MMSnapController *snapController = [[MMSnapController alloc] initWithViewControllers:viewControllers];
+    snapController.delegate = self;
     
     UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    window.rootViewController = navigationController;
+    window.rootViewController = snapController;
     
     [window makeKeyAndVisible];
     
@@ -43,7 +43,7 @@
     return YES;
 }
 
-- (MMViewControllerMetrics)navigationController:(MMNavigationController *)nc metricsForViewController:(UIViewController *)viewController
+- (MMViewControllerMetrics)snapController:(MMSnapController *)nc metricsForViewController:(UIViewController *)viewController
 {
     if (nc.viewControllers.lastObject == viewController) {
         return MMViewControllerMetricsLarge;

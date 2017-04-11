@@ -1,19 +1,19 @@
 //
-//  MMNavigationHeaderView.h
-//  MMNavigationController
+//  MMSnapHeaderView.h
+//  MMSnapController
 //
 //  Created by Matías Martínez on 1/27/15.
 //  Copyright (c) 2015 Matías Martínez. All rights reserved.
 //
 
-#import "MMNavigationController.h"
+#import "MMSnapController.h"
 
-typedef NS_ENUM(NSUInteger, MMNavigationHeaderAction) {
-    MMNavigationHeaderActionScroll = 0,
-    MMNavigationHeaderActionPop
+typedef NS_ENUM(NSUInteger, MMSnapHeaderAction) {
+    MMSnapHeaderActionScroll = 0,
+    MMSnapHeaderActionPop
 };
 
-@interface MMNavigationHeaderView : MMNavigationSupplementaryView
+@interface MMSnapHeaderView : MMSnapSupplementaryView
 
 @property (copy, nonatomic) NSString *title;
 @property (copy, nonatomic) NSString *subtitle;
@@ -21,7 +21,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationHeaderAction) {
 
 @property (copy, nonatomic) NSString *backButtonTitle;
 @property (assign, nonatomic) BOOL hidesBackButton;
-@property (assign, nonatomic) MMNavigationHeaderAction backButtonAction;
+@property (assign, nonatomic) MMSnapHeaderAction backButtonAction;
 
 @property (strong, nonatomic) UIButton *leftButton;
 @property (strong, nonatomic) UIButton *rightButton;

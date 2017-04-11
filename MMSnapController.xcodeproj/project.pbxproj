@@ -7,17 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		097E58641A7836A000BCDA16 /* MMNavigationHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 097E58631A7836A000BCDA16 /* MMNavigationHeaderView.m */; };
-		0986F5171A78774A00BBA5FC /* MMNavigationFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0986F5161A78774A00BBA5FC /* MMNavigationFooterView.m */; };
-		09A1D3231A81555E003AD8B0 /* MMNavigationBackIndicatorDefault@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 09A1D3221A81555E003AD8B0 /* MMNavigationBackIndicatorDefault@2x.png */; };
-		09A1D3251A81563F003AD8B0 /* MMNavigationBackIndicatorDefault@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 09A1D3241A81563F003AD8B0 /* MMNavigationBackIndicatorDefault@3x.png */; };
-		09A1D3271A8156D0003AD8B0 /* MMNavigationBackIndicatorDefault.png in Resources */ = {isa = PBXBuildFile; fileRef = 09A1D3261A8156D0003AD8B0 /* MMNavigationBackIndicatorDefault.png */; };
+		097E58641A7836A000BCDA16 /* MMSnapHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 097E58631A7836A000BCDA16 /* MMSnapHeaderView.m */; };
+		0986F5171A78774A00BBA5FC /* MMSnapFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0986F5161A78774A00BBA5FC /* MMSnapFooterView.m */; };
+		09A1D3231A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 09A1D3221A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png */; };
+		09A1D3251A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 09A1D3241A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png */; };
+		09A1D3271A8156D0003AD8B0 /* MMSnapBackIndicatorDefault.png in Resources */ = {isa = PBXBuildFile; fileRef = 09A1D3261A8156D0003AD8B0 /* MMSnapBackIndicatorDefault.png */; };
 		09BBA87D1A800AFE009634F0 /* MMDecelerationAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 09BBA87C1A800AFE009634F0 /* MMDecelerationAnimator.m */; };
 		09C9EA9D1A635E77009081BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C9EA9C1A635E77009081BF /* main.m */; };
 		09C9EAA01A635E77009081BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C9EA9F1A635E77009081BF /* AppDelegate.m */; };
 		09C9EAA31A635E77009081BF /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C9EAA21A635E77009081BF /* ViewController.m */; };
-		09C9EAB71A635E77009081BF /* MMNavigationControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C9EAB61A635E77009081BF /* MMNavigationControllerTests.m */; };
-		09C9EAC21A635F0A009081BF /* MMNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C9EAC11A635F0A009081BF /* MMNavigationController.m */; };
+		09C9EAB71A635E77009081BF /* MMSnapControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C9EAB61A635E77009081BF /* MMSnapControllerTests.m */; };
+		09C9EAC21A635F0A009081BF /* MMSnapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C9EAC11A635F0A009081BF /* MMSnapController.m */; };
 		09C9EAC51A636514009081BF /* MMSnapScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C9EAC41A636514009081BF /* MMSnapScrollView.m */; };
 /* End PBXBuildFile section */
 
@@ -32,27 +32,27 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		097E58621A7836A000BCDA16 /* MMNavigationHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMNavigationHeaderView.h; sourceTree = "<group>"; };
-		097E58631A7836A000BCDA16 /* MMNavigationHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMNavigationHeaderView.m; sourceTree = "<group>"; };
-		0986F5151A78774A00BBA5FC /* MMNavigationFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMNavigationFooterView.h; sourceTree = "<group>"; };
-		0986F5161A78774A00BBA5FC /* MMNavigationFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMNavigationFooterView.m; sourceTree = "<group>"; };
-		09A1D3221A81555E003AD8B0 /* MMNavigationBackIndicatorDefault@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MMNavigationBackIndicatorDefault@2x.png"; sourceTree = "<group>"; };
-		09A1D3241A81563F003AD8B0 /* MMNavigationBackIndicatorDefault@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MMNavigationBackIndicatorDefault@3x.png"; sourceTree = "<group>"; };
-		09A1D3261A8156D0003AD8B0 /* MMNavigationBackIndicatorDefault.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MMNavigationBackIndicatorDefault.png; sourceTree = "<group>"; };
+		097E58621A7836A000BCDA16 /* MMSnapHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSnapHeaderView.h; sourceTree = "<group>"; };
+		097E58631A7836A000BCDA16 /* MMSnapHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSnapHeaderView.m; sourceTree = "<group>"; };
+		0986F5151A78774A00BBA5FC /* MMSnapFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSnapFooterView.h; sourceTree = "<group>"; };
+		0986F5161A78774A00BBA5FC /* MMSnapFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSnapFooterView.m; sourceTree = "<group>"; };
+		09A1D3221A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MMSnapBackIndicatorDefault@2x.png"; sourceTree = "<group>"; };
+		09A1D3241A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MMSnapBackIndicatorDefault@3x.png"; sourceTree = "<group>"; };
+		09A1D3261A8156D0003AD8B0 /* MMSnapBackIndicatorDefault.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MMSnapBackIndicatorDefault.png; sourceTree = "<group>"; };
 		09BBA87B1A800AFE009634F0 /* MMDecelerationAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMDecelerationAnimator.h; sourceTree = "<group>"; };
 		09BBA87C1A800AFE009634F0 /* MMDecelerationAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMDecelerationAnimator.m; sourceTree = "<group>"; };
-		09C9EA971A635E77009081BF /* MMNavigationController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MMNavigationController.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		09C9EA971A635E77009081BF /* MMSnapController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MMSnapController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09C9EA9B1A635E77009081BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		09C9EA9C1A635E77009081BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		09C9EA9E1A635E77009081BF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		09C9EA9F1A635E77009081BF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		09C9EAA11A635E77009081BF /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		09C9EAA21A635E77009081BF /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		09C9EAB01A635E77009081BF /* MMNavigationControllerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MMNavigationControllerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		09C9EAB01A635E77009081BF /* MMSnapControllerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MMSnapControllerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		09C9EAB51A635E77009081BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		09C9EAB61A635E77009081BF /* MMNavigationControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMNavigationControllerTests.m; sourceTree = "<group>"; };
-		09C9EAC01A635F0A009081BF /* MMNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMNavigationController.h; sourceTree = "<group>"; };
-		09C9EAC11A635F0A009081BF /* MMNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMNavigationController.m; sourceTree = "<group>"; };
+		09C9EAB61A635E77009081BF /* MMSnapControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMSnapControllerTests.m; sourceTree = "<group>"; };
+		09C9EAC01A635F0A009081BF /* MMSnapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSnapController.h; sourceTree = "<group>"; };
+		09C9EAC11A635F0A009081BF /* MMSnapController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSnapController.m; sourceTree = "<group>"; };
 		09C9EAC31A636514009081BF /* MMSnapScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSnapScrollView.h; sourceTree = "<group>"; };
 		09C9EAC41A636514009081BF /* MMSnapScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSnapScrollView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -78,9 +78,9 @@
 		09A1D3211A81554C003AD8B0 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				09A1D3261A8156D0003AD8B0 /* MMNavigationBackIndicatorDefault.png */,
-				09A1D3221A81555E003AD8B0 /* MMNavigationBackIndicatorDefault@2x.png */,
-				09A1D3241A81563F003AD8B0 /* MMNavigationBackIndicatorDefault@3x.png */,
+				09A1D3261A8156D0003AD8B0 /* MMSnapBackIndicatorDefault.png */,
+				09A1D3221A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png */,
+				09A1D3241A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png */,
 			);
 			path = Images;
 			sourceTree = SOURCE_ROOT;
@@ -90,8 +90,8 @@
 			children = (
 				09F548441A8151A400FC5C45 /* Classes */,
 				09A1D3211A81554C003AD8B0 /* Images */,
-				09C9EA991A635E77009081BF /* MMNavigationControllerDemo */,
-				09C9EAB31A635E77009081BF /* MMNavigationControllerTests */,
+				09C9EA991A635E77009081BF /* MMSnapControllerDemo */,
+				09C9EAB31A635E77009081BF /* MMSnapControllerTests */,
 				09C9EA981A635E77009081BF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -99,13 +99,13 @@
 		09C9EA981A635E77009081BF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				09C9EA971A635E77009081BF /* MMNavigationController.app */,
-				09C9EAB01A635E77009081BF /* MMNavigationControllerTests.xctest */,
+				09C9EA971A635E77009081BF /* MMSnapController.app */,
+				09C9EAB01A635E77009081BF /* MMSnapControllerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		09C9EA991A635E77009081BF /* MMNavigationControllerDemo */ = {
+		09C9EA991A635E77009081BF /* MMSnapControllerDemo */ = {
 			isa = PBXGroup;
 			children = (
 				09C9EA9E1A635E77009081BF /* AppDelegate.h */,
@@ -114,7 +114,7 @@
 				09C9EAA21A635E77009081BF /* ViewController.m */,
 				09C9EA9A1A635E77009081BF /* Supporting Files */,
 			);
-			path = MMNavigationControllerDemo;
+			path = MMSnapControllerDemo;
 			sourceTree = "<group>";
 		};
 		09C9EA9A1A635E77009081BF /* Supporting Files */ = {
@@ -126,13 +126,13 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		09C9EAB31A635E77009081BF /* MMNavigationControllerTests */ = {
+		09C9EAB31A635E77009081BF /* MMSnapControllerTests */ = {
 			isa = PBXGroup;
 			children = (
-				09C9EAB61A635E77009081BF /* MMNavigationControllerTests.m */,
+				09C9EAB61A635E77009081BF /* MMSnapControllerTests.m */,
 				09C9EAB41A635E77009081BF /* Supporting Files */,
 			);
-			path = MMNavigationControllerTests;
+			path = MMSnapControllerTests;
 			sourceTree = "<group>";
 		};
 		09C9EAB41A635E77009081BF /* Supporting Files */ = {
@@ -146,16 +146,16 @@
 		09F548441A8151A400FC5C45 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				09C9EAC01A635F0A009081BF /* MMNavigationController.h */,
-				09C9EAC11A635F0A009081BF /* MMNavigationController.m */,
+				09C9EAC01A635F0A009081BF /* MMSnapController.h */,
+				09C9EAC11A635F0A009081BF /* MMSnapController.m */,
 				09C9EAC31A636514009081BF /* MMSnapScrollView.h */,
 				09C9EAC41A636514009081BF /* MMSnapScrollView.m */,
 				09BBA87B1A800AFE009634F0 /* MMDecelerationAnimator.h */,
 				09BBA87C1A800AFE009634F0 /* MMDecelerationAnimator.m */,
-				097E58621A7836A000BCDA16 /* MMNavigationHeaderView.h */,
-				097E58631A7836A000BCDA16 /* MMNavigationHeaderView.m */,
-				0986F5151A78774A00BBA5FC /* MMNavigationFooterView.h */,
-				0986F5161A78774A00BBA5FC /* MMNavigationFooterView.m */,
+				097E58621A7836A000BCDA16 /* MMSnapHeaderView.h */,
+				097E58631A7836A000BCDA16 /* MMSnapHeaderView.m */,
+				0986F5151A78774A00BBA5FC /* MMSnapFooterView.h */,
+				0986F5161A78774A00BBA5FC /* MMSnapFooterView.m */,
 			);
 			path = Classes;
 			sourceTree = SOURCE_ROOT;
@@ -163,9 +163,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		09C9EA961A635E77009081BF /* MMNavigationController */ = {
+		09C9EA961A635E77009081BF /* MMSnapController */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 09C9EABA1A635E77009081BF /* Build configuration list for PBXNativeTarget "MMNavigationController" */;
+			buildConfigurationList = 09C9EABA1A635E77009081BF /* Build configuration list for PBXNativeTarget "MMSnapController" */;
 			buildPhases = (
 				09C9EA931A635E77009081BF /* Sources */,
 				09C9EA941A635E77009081BF /* Frameworks */,
@@ -175,14 +175,14 @@
 			);
 			dependencies = (
 			);
-			name = MMNavigationController;
+			name = MMSnapController;
 			productName = MMNavigationController;
-			productReference = 09C9EA971A635E77009081BF /* MMNavigationController.app */;
+			productReference = 09C9EA971A635E77009081BF /* MMSnapController.app */;
 			productType = "com.apple.product-type.application";
 		};
-		09C9EAAF1A635E77009081BF /* MMNavigationControllerTests */ = {
+		09C9EAAF1A635E77009081BF /* MMSnapControllerTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 09C9EABD1A635E77009081BF /* Build configuration list for PBXNativeTarget "MMNavigationControllerTests" */;
+			buildConfigurationList = 09C9EABD1A635E77009081BF /* Build configuration list for PBXNativeTarget "MMSnapControllerTests" */;
 			buildPhases = (
 				09C9EAAC1A635E77009081BF /* Sources */,
 				09C9EAAD1A635E77009081BF /* Frameworks */,
@@ -193,9 +193,9 @@
 			dependencies = (
 				09C9EAB21A635E77009081BF /* PBXTargetDependency */,
 			);
-			name = MMNavigationControllerTests;
+			name = MMSnapControllerTests;
 			productName = MMNavigationControllerTests;
-			productReference = 09C9EAB01A635E77009081BF /* MMNavigationControllerTests.xctest */;
+			productReference = 09C9EAB01A635E77009081BF /* MMSnapControllerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -209,7 +209,7 @@
 				TargetAttributes = {
 					09C9EA961A635E77009081BF = {
 						CreatedOnToolsVersion = 6.1.1;
-						DevelopmentTeam = Z74X643W5T;
+						ProvisioningStyle = Manual;
 					};
 					09C9EAAF1A635E77009081BF = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -217,7 +217,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 09C9EA921A635E77009081BF /* Build configuration list for PBXProject "MMNavigationController" */;
+			buildConfigurationList = 09C9EA921A635E77009081BF /* Build configuration list for PBXProject "MMSnapController" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -230,8 +230,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				09C9EA961A635E77009081BF /* MMNavigationController */,
-				09C9EAAF1A635E77009081BF /* MMNavigationControllerTests */,
+				09C9EA961A635E77009081BF /* MMSnapController */,
+				09C9EAAF1A635E77009081BF /* MMSnapControllerTests */,
 			);
 		};
 /* End PBXProject section */
@@ -241,9 +241,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09A1D3271A8156D0003AD8B0 /* MMNavigationBackIndicatorDefault.png in Resources */,
-				09A1D3251A81563F003AD8B0 /* MMNavigationBackIndicatorDefault@3x.png in Resources */,
-				09A1D3231A81555E003AD8B0 /* MMNavigationBackIndicatorDefault@2x.png in Resources */,
+				09A1D3271A8156D0003AD8B0 /* MMSnapBackIndicatorDefault.png in Resources */,
+				09A1D3251A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png in Resources */,
+				09A1D3231A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,13 +262,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				09C9EAA31A635E77009081BF /* ViewController.m in Sources */,
-				0986F5171A78774A00BBA5FC /* MMNavigationFooterView.m in Sources */,
-				09C9EAC21A635F0A009081BF /* MMNavigationController.m in Sources */,
+				0986F5171A78774A00BBA5FC /* MMSnapFooterView.m in Sources */,
+				09C9EAC21A635F0A009081BF /* MMSnapController.m in Sources */,
 				09BBA87D1A800AFE009634F0 /* MMDecelerationAnimator.m in Sources */,
 				09C9EAC51A636514009081BF /* MMSnapScrollView.m in Sources */,
 				09C9EAA01A635E77009081BF /* AppDelegate.m in Sources */,
 				09C9EA9D1A635E77009081BF /* main.m in Sources */,
-				097E58641A7836A000BCDA16 /* MMNavigationHeaderView.m in Sources */,
+				097E58641A7836A000BCDA16 /* MMSnapHeaderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,7 +276,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09C9EAB71A635E77009081BF /* MMNavigationControllerTests.m in Sources */,
+				09C9EAB71A635E77009081BF /* MMSnapControllerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,7 +285,7 @@
 /* Begin PBXTargetDependency section */
 		09C9EAB21A635E77009081BF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 09C9EA961A635E77009081BF /* MMNavigationController */;
+			target = 09C9EA961A635E77009081BF /* MMSnapController */;
 			targetProxy = 09C9EAB11A635E77009081BF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -375,10 +375,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				INFOPLIST_FILE = MMNavigationControllerDemo/Info.plist;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = MMSnapControllerDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -388,10 +390,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				INFOPLIST_FILE = MMNavigationControllerDemo/Info.plist;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = MMSnapControllerDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
@@ -407,10 +411,10 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = MMNavigationControllerTests/Info.plist;
+				INFOPLIST_FILE = MMSnapControllerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MMNavigationController.app/MMNavigationController";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MMSnapController.app/MMSnapController";
 			};
 			name = Debug;
 		};
@@ -422,17 +426,17 @@
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = MMNavigationControllerTests/Info.plist;
+				INFOPLIST_FILE = MMSnapControllerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MMNavigationController.app/MMNavigationController";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MMSnapController.app/MMSnapController";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		09C9EA921A635E77009081BF /* Build configuration list for PBXProject "MMNavigationController" */ = {
+		09C9EA921A635E77009081BF /* Build configuration list for PBXProject "MMSnapController" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				09C9EAB81A635E77009081BF /* Debug */,
@@ -441,7 +445,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		09C9EABA1A635E77009081BF /* Build configuration list for PBXNativeTarget "MMNavigationController" */ = {
+		09C9EABA1A635E77009081BF /* Build configuration list for PBXNativeTarget "MMSnapController" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				09C9EABB1A635E77009081BF /* Debug */,
@@ -450,7 +454,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		09C9EABD1A635E77009081BF /* Build configuration list for PBXNativeTarget "MMNavigationControllerTests" */ = {
+		09C9EABD1A635E77009081BF /* Build configuration list for PBXNativeTarget "MMSnapControllerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				09C9EABE1A635E77009081BF /* Debug */,

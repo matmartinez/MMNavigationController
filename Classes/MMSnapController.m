@@ -1,17 +1,17 @@
 //
-//  MMNavigationController.m
-//  MMNavigationController
+//  MMSnapController.m
+//  MMSnapController
 //
 //  Created by Matías Martínez on 1/11/15.
 //  Copyright (c) 2015 Matías Martínez. All rights reserved.
 //
 
-#import "MMNavigationController.h"
+#import "MMSnapController.h"
 #import "MMSnapScrollView.h"
-#import "MMNavigationHeaderView.h"
-#import "MMNavigationFooterView.h"
+#import "MMSnapHeaderView.h"
+#import "MMSnapFooterView.h"
 
-@interface MMNavigationController () <MMSnapScrollViewDataSource, MMSnapScrollViewDelegate>
+@interface MMSnapController () <MMSnapScrollViewDataSource, MMSnapScrollViewDelegate>
 {
     struct {
         unsigned int delegateWillDisplayViewController : 1;
@@ -31,20 +31,20 @@
 
 @end
 
-typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
-    MMNavigationViewTypeHeader,
-    MMNavigationViewTypeFooter
+typedef NS_ENUM(NSUInteger, MMSnapViewType) {
+    MMSnapViewTypeHeader,
+    MMSnapViewTypeFooter
 };
 
-@interface MMNavigationSupplementaryView ()
+@interface MMSnapSupplementaryView ()
 
-@property (assign, nonatomic, setter=_setViewType:) MMNavigationViewType _viewType;
+@property (assign, nonatomic, setter=_setViewType:) MMSnapViewType _viewType;
 @property (weak, nonatomic, readwrite) UIViewController *viewController;
-@property (weak, nonatomic, readwrite) MMNavigationController *navigationController;
+@property (weak, nonatomic, readwrite) MMSnapController *snapController;
 
 @end
 
-@implementation MMNavigationController
+@implementation MMSnapController
 
 #pragma mark - Init.
 
@@ -178,7 +178,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 - (UIViewController *)partiallyVisibleViewController
 {
-    if (!self.isViewLoaded || self.scrollMode == MMNavigationScrollModePaging) {
+    if (!self.isViewLoaded || self.scrollMode == MMSnapScrollModePaging) {
         return nil;
     }
     
@@ -219,7 +219,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 #pragma mark - Delegate.
 
-- (void)setDelegate:(id<MMNavigationControllerDelegate>)delegate
+- (void)setDelegate:(id<MMSnapControllerDelegate>)delegate
 {
     if (delegate == _delegate) {
         return;
@@ -227,12 +227,12 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     
     _delegate = delegate;
     
-    _delegateFlags.delegateCustomWidthForViewController = [delegate respondsToSelector:@selector(navigationController:metricsForViewController:)];
-    _delegateFlags.delegateDidEndDisplayingViewController = [delegate respondsToSelector:@selector(navigationController:didEndDisplayingViewController:)];
-    _delegateFlags.delegateWillDisplayViewController = [delegate respondsToSelector:@selector(navigationController:willDisplayViewController:)];
-    _delegateFlags.delegateWillSnapViewController = [delegate respondsToSelector:@selector(navigationController:willSnapToViewController:)];
-    _delegateFlags.delegateDidSnapViewController = [delegate respondsToSelector:@selector(navigationController:didSnapToViewController:)];
-    _delegateFlags.delegateWillTransitionToScrollMode = [delegate respondsToSelector:@selector(navigationController:willTransitionToScrollMode:transitionCoordinator:)];
+    _delegateFlags.delegateCustomWidthForViewController = [delegate respondsToSelector:@selector(snapController:metricsForViewController:)];
+    _delegateFlags.delegateDidEndDisplayingViewController = [delegate respondsToSelector:@selector(snapController:didEndDisplayingViewController:)];
+    _delegateFlags.delegateWillDisplayViewController = [delegate respondsToSelector:@selector(snapController:willDisplayViewController:)];
+    _delegateFlags.delegateWillSnapViewController = [delegate respondsToSelector:@selector(snapController:willSnapToViewController:)];
+    _delegateFlags.delegateDidSnapViewController = [delegate respondsToSelector:@selector(snapController:didSnapToViewController:)];
+    _delegateFlags.delegateWillTransitionToScrollMode = [delegate respondsToSelector:@selector(snapController:willTransitionToScrollMode:transitionCoordinator:)];
 }
 
 #pragma mark - Scroll to.
@@ -249,12 +249,12 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     [self.scrollView scrollToPage:idx animated:animated];
 }
 
-- (MMNavigationScrollMode)scrollMode
+- (MMSnapScrollMode)scrollMode
 {
     if (self.scrollView.isPagingEnabled) {
-        return MMNavigationScrollModePaging;
+        return MMSnapScrollModePaging;
     }
-    return MMNavigationScrollModeNearestSnapPoint;
+    return MMSnapScrollModeNearestSnapPoint;
 }
 
 #pragma mark - Operations.
@@ -356,10 +356,10 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     BOOL pagingEnabled = horizontallyCompact;
     
     if (pagingEnabled != self.scrollView.isPagingEnabled) {
-        MMNavigationScrollMode scrollMode = pagingEnabled ? MMNavigationScrollModePaging : MMNavigationScrollModeNearestSnapPoint;
+        MMSnapScrollMode scrollMode = pagingEnabled ? MMSnapScrollModePaging : MMSnapScrollModeNearestSnapPoint;
         
         if (_delegateFlags.delegateWillTransitionToScrollMode) {
-            [self.delegate navigationController:self willTransitionToScrollMode:scrollMode transitionCoordinator:coordinator];
+            [self.delegate snapController:self willTransitionToScrollMode:scrollMode transitionCoordinator:coordinator];
         }
         
         [self.scrollView setPagingEnabled:pagingEnabled];
@@ -388,7 +388,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     if (_delegateFlags.delegateCustomWidthForViewController) {
         UIViewController *viewController = [self _viewControllerAtPage:page];
         
-        const MMViewControllerMetrics metrics = [self.delegate navigationController:self metricsForViewController:viewController];
+        const MMViewControllerMetrics metrics = [self.delegate snapController:self metricsForViewController:viewController];
         
         if (metrics == MMViewControllerMetricsFullscreen) {
             return CGRectGetWidth(bounds);
@@ -445,15 +445,15 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
         [viewController beginAppearanceTransition:YES animated:(scrollView.isDecelerating || scrollView.isTracking)];
         [viewController endAppearanceTransition];
         
-        for (MMNavigationSupplementaryView *view in self.headerFooterViewArray) {
+        for (MMSnapSupplementaryView *view in self.headerFooterViewArray) {
             if (view.viewController == viewController) {
-                [view navigationControllerWillDisplayViewController];
+                [view snapControllerWillDisplayViewController];
                 break;
             }
         }
         
         if (_delegateFlags.delegateWillDisplayViewController) {
-            [self.delegate navigationController:self willDisplayViewController:viewController];
+            [self.delegate snapController:self willDisplayViewController:viewController];
         }
     }
 }
@@ -466,7 +466,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
         [viewController endAppearanceTransition];
         
         if (_delegateFlags.delegateDidEndDisplayingViewController) {
-            [self.delegate navigationController:self didEndDisplayingViewController:viewController];
+            [self.delegate snapController:self didEndDisplayingViewController:viewController];
         }
     }
 }
@@ -476,11 +476,11 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     UIViewController *viewController = [self _viewControllerAtPage:page];
     if (viewController) {
         if (_delegateFlags.delegateWillSnapViewController) {
-            [self.delegate navigationController:self willSnapToViewController:viewController];
+            [self.delegate snapController:self willSnapToViewController:viewController];
         }
         
-        for (MMNavigationSupplementaryView *view in self.headerFooterViewArray) {
-            [view navigationControllerWillSnapToViewController:viewController];
+        for (MMSnapSupplementaryView *view in self.headerFooterViewArray) {
+            [view snapControllerWillSnapToViewController:viewController];
         }
     }
 }
@@ -489,7 +489,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 {
     UIViewController *viewController = [self _viewControllerAtPage:page];
     if (_delegateFlags.delegateDidSnapViewController) {
-        [self.delegate navigationController:self didSnapToViewController:viewController];
+        [self.delegate snapController:self didSnapToViewController:viewController];
     }
 }
 
@@ -518,23 +518,23 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 - (UIView *)headerViewForViewController:(UIViewController *)viewController
 {
-    return [self _supplementaryViewWithType:MMNavigationViewTypeHeader forViewForViewController:viewController];
+    return [self _supplementaryViewWithType:MMSnapViewTypeHeader forViewForViewController:viewController];
 }
 
 - (UIView *)footerViewForViewController:(UIViewController *)viewController
 {
-    return [self _supplementaryViewWithType:MMNavigationViewTypeFooter forViewForViewController:viewController];
+    return [self _supplementaryViewWithType:MMSnapViewTypeFooter forViewForViewController:viewController];
 }
 
-- (UIView *)_supplementaryViewWithType:(MMNavigationViewType)type forViewForViewController:(UIViewController *)viewController
+- (UIView *)_supplementaryViewWithType:(MMSnapViewType)type forViewForViewController:(UIViewController *)viewController
 {
     if (![self.viewControllers containsObject:viewController]) {
         return nil;
     }
     
-    MMNavigationSupplementaryView *view = nil;
+    MMSnapSupplementaryView *view = nil;
     
-    for (MMNavigationSupplementaryView *v in self.headerFooterViewArray.copy) {
+    for (MMSnapSupplementaryView *v in self.headerFooterViewArray.copy) {
         if (v._viewType == type && v.viewController == viewController) {
             view = v;
             break;
@@ -543,18 +543,18 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
     
     if (!view) {
         Class viewClass;
-        if (type == MMNavigationViewTypeHeader) {
-            viewClass = self.headerViewClass ?: [MMNavigationHeaderView class];
-        } else if (type == MMNavigationViewTypeFooter) {
-            viewClass = self.footerViewClass ?: [MMNavigationFooterView class];
+        if (type == MMSnapViewTypeHeader) {
+            viewClass = self.headerViewClass ?: [MMSnapHeaderView class];
+        } else if (type == MMSnapViewTypeFooter) {
+            viewClass = self.footerViewClass ?: [MMSnapFooterView class];
         }
         
         view = [[viewClass alloc] initWithFrame:CGRectZero];
-        view.navigationController = self;
+        view.snapController = self;
         view.viewController = viewController;
         view._viewType = type;
         
-        [view didMoveToNavigationController];
+        [view didMoveToSnapController];
         
         if (view) {
             [self.headerFooterViewArray addObject:view];
@@ -566,26 +566,26 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 - (void)_insertSupplementaryViewsForViewControllers:(NSArray *)viewControllers
 {
-    for (MMNavigationSupplementaryView *view in self.headerFooterViewArray.copy) {
+    for (MMSnapSupplementaryView *view in self.headerFooterViewArray.copy) {
         if ([viewControllers containsObject:view.viewController]) {
-            [view didMoveToNavigationController];
+            [view didMoveToSnapController];
         }
     }
 }
 
 - (void)_removeSupplementaryViewsForViewControllers:(NSArray *)viewControllers
 {
-    for (MMNavigationSupplementaryView *view in self.headerFooterViewArray.copy) {
+    for (MMSnapSupplementaryView *view in self.headerFooterViewArray.copy) {
         if ([viewControllers containsObject:view.viewController]) {
-            [view willMoveFromNavigationController];
+            [view willMoveFromSnapController];
         }
     }
 }
 
 - (void)_notifyViewControllersDidChange
 {
-    for (MMNavigationSupplementaryView *view in self.headerFooterViewArray.copy) {
-        [view navigationControllerViewControllersDidChange];
+    for (MMSnapSupplementaryView *view in self.headerFooterViewArray.copy) {
+        [view snapControllerViewControllersDidChange];
     }
 }
 
@@ -601,7 +601,7 @@ typedef NS_ENUM(NSUInteger, MMNavigationViewType) {
 
 @end
 
-@implementation MMNavigationController (StateRestoration)
+@implementation MMSnapController (StateRestoration)
 
 static NSString * MMViewControllerChildrenKey = @"kUIViewControllerChildrenKey";
 static NSString * MMViewControllerVisibleViewControllerKey = @"MMViewControllerVisibleViewControllerKey";
@@ -650,13 +650,13 @@ static NSString * MMViewControllerVisibleViewControllerKey = @"MMViewControllerV
 
 @end
 
-@implementation MMNavigationSupplementaryView
+@implementation MMSnapSupplementaryView
 
 - (UIViewController *)previousViewController
 {
-    __strong MMNavigationController *navigationController = self.navigationController;
-    if (navigationController) {
-        NSArray *viewControllers = navigationController.viewControllers;
+    __strong MMSnapController *snapController = self.snapController;
+    if (snapController) {
+        NSArray *viewControllers = snapController.viewControllers;
         NSUInteger idx = [viewControllers indexOfObject:self.viewController];
         if (idx != NSNotFound && idx - 1 < viewControllers.count) {
             return viewControllers[idx - 1];
@@ -665,32 +665,32 @@ static NSString * MMViewControllerVisibleViewControllerKey = @"MMViewControllerV
     return nil;
 }
 
-- (void)navigationControllerWillDisplayViewController
+- (void)snapControllerWillDisplayViewController
 {
     
 }
 
-- (void)navigationControllerWillSnapToViewController:(UIViewController *)viewController
+- (void)snapControllerWillSnapToViewController:(UIViewController *)viewController
 {
     
 }
 
-- (void)willMoveToNavigationController:(MMNavigationController *)navigationController
+- (void)willMoveToSnapController:(MMSnapController *)snapController
 {
     
 }
 
-- (void)willMoveFromNavigationController
+- (void)willMoveFromSnapController
 {
     
 }
 
-- (void)didMoveToNavigationController
+- (void)didMoveToSnapController
 {
     
 }
 
-- (void)navigationControllerViewControllersDidChange
+- (void)snapControllerViewControllersDidChange
 {
     
 }

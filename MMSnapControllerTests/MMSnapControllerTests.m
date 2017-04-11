@@ -1,6 +1,6 @@
 //
-//  MMNavigationControllerTests.m
-//  MMNavigationControllerTests
+//  MMSnapControllerTests.m
+//  MMSnapControllerTests
 //
 //  Created by Matías Martínez on 1/11/15.
 //  Copyright (c) 2015 Matías Martínez. All rights reserved.
@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 
-@interface MMNavigationControllerTests : XCTestCase
+@interface MMSnapControllerTests : XCTestCase
 
 @end
 
-@implementation MMNavigationControllerTests
+@implementation MMSnapControllerTests
 
 - (void)setUp {
     [super setUp];

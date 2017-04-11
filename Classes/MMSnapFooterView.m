@@ -1,22 +1,22 @@
 //
-//  MMNavigationFooterView.m
-//  MMNavigationController
+//  MMSnapFooterView.m
+//  MMSnapController
 //
 //  Created by Matías Martínez on 1/27/15.
 //  Copyright (c) 2015 Matías Martínez. All rights reserved.
 //
 
-#import "MMNavigationFooterView.h"
+#import "MMSnapFooterView.h"
 
-@interface MMNavigationFooterView ()
+@interface MMSnapFooterView ()
 
 @property (strong, nonatomic) UIView *separatorView;
 
 @end
 
-const CGFloat MMNavigationFooterFlexibleWidth = CGFLOAT_MAX;
+const CGFloat MMSnapFooterFlexibleWidth = CGFLOAT_MAX;
 
-@implementation MMNavigationFooterView
+@implementation MMSnapFooterView
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -50,8 +50,8 @@ const CGFloat MMNavigationFooterFlexibleWidth = CGFLOAT_MAX;
 
 #pragma mark - Layout.
 
-static const NSString *MMNavigationFooterInfoObjectKey = @"Object";
-static const NSString *MMNavigationFooterInfoSizeKey = @"Size";
+static const NSString *MMSnapFooterInfoObjectKey = @"Object";
+static const NSString *MMSnapFooterInfoSizeKey = @"Size";
 
 - (void)layoutSubviews
 {
@@ -81,18 +81,18 @@ static const NSString *MMNavigationFooterInfoSizeKey = @"Size";
             itemSize = [(UIView *)item sizeThatFits:maximumItemSize];
             itemSize.width = MIN(itemSize.width, maximumItemSize.width);
             
-        } else if ([item isKindOfClass:[MMNavigationFooterSpace class]]) {
-            CGFloat width = [(MMNavigationFooterSpace *)item width];
+        } else if ([item isKindOfClass:[MMSnapFooterSpace class]]) {
+            CGFloat width = [(MMSnapFooterSpace *)item width];
             
-            if (width == MMNavigationFooterFlexibleWidth) {
+            if (width == MMSnapFooterFlexibleWidth) {
                 flexibleItemsCount++;
             } else {
                 itemSize = CGSizeMake(width, 0);
             }
         }
         
-        NSDictionary *info = @{ MMNavigationFooterInfoSizeKey : [NSValue valueWithCGSize:itemSize],
-                                MMNavigationFooterInfoObjectKey : item };
+        NSDictionary *info = @{ MMSnapFooterInfoSizeKey : [NSValue valueWithCGSize:itemSize],
+                                MMSnapFooterInfoObjectKey : item };
         
         [itemsToLayout addObject:info];
     }
@@ -104,7 +104,7 @@ static const NSString *MMNavigationFooterInfoSizeKey = @"Size";
     
     NSUInteger idx = 0;
     for (NSDictionary *info in itemsToLayout.copy) {
-        CGSize itemSize = [info[MMNavigationFooterInfoSizeKey] CGSizeValue];
+        CGSize itemSize = [info[MMSnapFooterInfoSizeKey] CGSizeValue];
         
         CGFloat proposedContentWidth = contentWidth + itemSize.width + interSeparationWidth;
         if (proposedContentWidth > maximumContentWidth) {
@@ -125,13 +125,13 @@ static const NSString *MMNavigationFooterInfoSizeKey = @"Size";
     CGFloat contentOffset = pad;
     
     for (NSDictionary *info in itemsToLayout) {
-        id item = info[MMNavigationFooterInfoObjectKey];
-        CGSize itemSize = [info[MMNavigationFooterInfoSizeKey] CGSizeValue];
+        id item = info[MMSnapFooterInfoObjectKey];
+        CGSize itemSize = [info[MMSnapFooterInfoSizeKey] CGSizeValue];
         
-        if ([item isKindOfClass:[MMNavigationFooterSpace class]]) {
-            CGFloat width = [(MMNavigationFooterSpace *)item width];
+        if ([item isKindOfClass:[MMSnapFooterSpace class]]) {
+            CGFloat width = [(MMSnapFooterSpace *)item width];
             
-            if (width == MMNavigationFooterFlexibleWidth) {
+            if (width == MMSnapFooterFlexibleWidth) {
                 itemSize = CGSizeMake(flexibleUnitWidth, 0);
             }
         }
@@ -157,7 +157,7 @@ static const NSString *MMNavigationFooterInfoSizeKey = @"Size";
     for (id item in items) {
         if ([item isKindOfClass:[UIView class]]) {
             NSUInteger idx = [itemsToLayout indexOfObjectPassingTest:^BOOL(NSDictionary *info, NSUInteger idx, BOOL *stop) {
-                return (info[MMNavigationFooterInfoObjectKey] == item);
+                return (info[MMSnapFooterInfoObjectKey] == item);
             }];
             
             [item setHidden:(idx == NSNotFound)];
@@ -277,7 +277,7 @@ static const NSString *MMNavigationFooterInfoSizeKey = @"Size";
 
 @end
 
-@implementation MMNavigationFooterSpace
+@implementation MMSnapFooterSpace
 
 - (instancetype)init
 {

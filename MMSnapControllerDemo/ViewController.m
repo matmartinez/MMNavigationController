@@ -1,17 +1,17 @@
 //
 //  ViewController.m
-//  MMNavigationController
+//  MMSnapController
 //
 //  Created by Matías Martínez on 1/11/15.
 //  Copyright (c) 2015 Matías Martínez. All rights reserved.
 //
 
 #import "ViewController.h"
-#import "MMNavigationHeaderView.h"
+#import "MMSnapHeaderView.h"
 
 @interface ViewController ()
 
-@property (strong, nonatomic) MMNavigationHeaderView *headerView;
+@property (strong, nonatomic) MMSnapHeaderView *headerView;
 
 @end
 
@@ -35,7 +35,7 @@
     [super viewDidLoad];
     
     // Nav bar.
-    MMNavigationHeaderView *headerView = (id)[(id)self.parentViewController headerViewForViewController:self];
+    MMSnapHeaderView *headerView = (id)[(id)self.parentViewController headerViewForViewController:self];
     headerView.tintColor = self.color;
     headerView.title = @"View";
     headerView.rightButton = [UIButton buttonWithType:UIButtonTypeInfoLight];

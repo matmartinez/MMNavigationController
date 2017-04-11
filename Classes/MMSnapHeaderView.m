@@ -1,14 +1,14 @@
 //
-//  MMNavigationHeaderView.m
-//  MMNavigationController
+//  MMSnapHeaderView.m
+//  MMSnapController
 //
 //  Created by Matías Martínez on 1/27/15.
 //  Copyright (c) 2015 Matías Martínez. All rights reserved.
 //
 
-#import "MMNavigationHeaderView.h"
+#import "MMSnapHeaderView.h"
 
-@interface MMNavigationHeaderView () {
+@interface MMSnapHeaderView () {
     struct {
         unsigned int usingMultilineHeading : 1;
         unsigned int usingCustomTitleView : 1;
@@ -36,7 +36,7 @@
 
 @end
 
-@implementation MMNavigationHeaderView
+@implementation MMSnapHeaderView
 
 #define UIKitLocalizedString(key) [[NSBundle bundleWithIdentifier:@"com.apple.UIKit"] localizedStringForKey:key value:@"" table:nil]
 
@@ -93,7 +93,7 @@
         UIButton *regularBackButton = [UIButton buttonWithType:UIButtonTypeSystem];
         UIButton *compactBackButton = [UIButton buttonWithType:UIButtonTypeSystem];
         
-        UIImage *backButtonImage = [[UIImage imageNamed:@"MMNavigationBackIndicatorDefault.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        UIImage *backButtonImage = [[UIImage imageNamed:@"MMSnapBackIndicatorDefault.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
         backButtonImage.accessibilityLabel = UIKitLocalizedString(@"Back");
         
         for (UIButton *backButton in @[ regularBackButton, compactBackButton ]) {
@@ -141,21 +141,21 @@
 
 - (void)_backButtonTouchUpInside:(id)sender
 {
-    MMNavigationHeaderAction backButtonAction = self.backButtonAction;
+    MMSnapHeaderAction backButtonAction = self.backButtonAction;
     
-    MMNavigationController *navigationController = self.navigationController;
+    MMSnapController *snapController = self.snapController;
     UIViewController *viewController = self.viewController;
     
-    BOOL isFirstVisibleViewController = (navigationController.visibleViewControllers.firstObject == viewController);
+    BOOL isFirstVisibleViewController = (snapController.visibleViewControllers.firstObject == viewController);
     if (isFirstVisibleViewController) {
         UIViewController *previousViewController = self.previousViewController;
-        if (backButtonAction == MMNavigationHeaderActionPop) {
-            [navigationController popToViewController:previousViewController animated:YES];
-        } else if (backButtonAction == MMNavigationHeaderActionScroll) {
-            [navigationController scrollToViewController:previousViewController animated:YES];
+        if (backButtonAction == MMSnapHeaderActionPop) {
+            [snapController popToViewController:previousViewController animated:YES];
+        } else if (backButtonAction == MMSnapHeaderActionScroll) {
+            [snapController scrollToViewController:previousViewController animated:YES];
         }
     } else {
-        [navigationController scrollToViewController:viewController animated:YES];
+        [snapController scrollToViewController:viewController animated:YES];
     }
 }
 
@@ -183,7 +183,7 @@
     
     // First, what we should display here?
     BOOL pagingEnabled = self.pagingEnabled;
-    BOOL isLastViewController = self.navigationController.viewControllers.lastObject == self.viewController;
+    BOOL isLastViewController = self.snapController.viewControllers.lastObject == self.viewController;
     BOOL isHiddenInLastColumn = !pagingEnabled && isLastViewController;
     
     BOOL showsLeftButton = _leftButton != nil;
@@ -354,11 +354,11 @@
 
 #pragma mark - Updates.
 
-- (void)navigationControllerWillDisplayViewController
+- (void)snapControllerWillDisplayViewController
 {
     UIViewController *previousViewController = self.previousViewController;
     if (previousViewController) {
-        MMNavigationHeaderView *headerView = (MMNavigationHeaderView *)[self.navigationController headerViewForViewController:previousViewController];
+        MMSnapHeaderView *headerView = (MMSnapHeaderView *)[self.snapController headerViewForViewController:previousViewController];
         NSString *backTitle = headerView.backButtonTitle ?: headerView.title ?: previousViewController.title;
         
         [self.regularBackButton setTitle:backTitle forState:UIControlStateNormal];
@@ -368,10 +368,10 @@
     }
 }
 
-- (void)didMoveToNavigationController
+- (void)didMoveToSnapController
 {
     if (!self.pagingEnabled) {
-        BOOL firstVisibleViewController = (self.navigationController.visibleViewControllers.firstObject == self.viewController);
+        BOOL firstVisibleViewController = (self.snapController.visibleViewControllers.firstObject == self.viewController);
         
         [self setRotatesBackButton:!firstVisibleViewController];
     } else {
@@ -379,7 +379,7 @@
     }
 }
 
-- (void)navigationControllerWillSnapToViewController:(UIViewController *)viewController
+- (void)snapControllerWillSnapToViewController:(UIViewController *)viewController
 {
     if (!self.pagingEnabled) {
         [self setRotatesBackButton:(viewController != self.viewController)];
@@ -388,7 +388,7 @@
     }
 }
 
-- (void)navigationControllerViewControllersDidChange
+- (void)snapControllerViewControllersDidChange
 {
     [self setNeedsLayout];
 }
@@ -415,7 +415,7 @@
 
 - (BOOL)pagingEnabled
 {
-    return self.navigationController.scrollMode == MMNavigationScrollModePaging;
+    return self.snapController.scrollMode == MMSnapScrollModePaging;
 }
 
 #pragma mark - Hit testing.

@@ -1,16 +1,16 @@
 //
-//  MMNavigationFooterView.h
-//  MMNavigationController
+//  MMSnapFooterView.h
+//  MMSnapController
 //
 //  Created by Matías Martínez on 1/27/15.
 //  Copyright (c) 2015 Matías Martínez. All rights reserved.
 //
 
-#import "MMNavigationController.h"
+#import "MMSnapController.h"
 
-extern const CGFloat MMNavigationFooterFlexibleWidth;
+extern const CGFloat MMSnapFooterFlexibleWidth;
 
-@interface MMNavigationFooterView : MMNavigationSupplementaryView
+@interface MMSnapFooterView : MMSnapSupplementaryView
 
 @property (copy, nonatomic) NSArray *items;
 
@@ -22,7 +22,7 @@ extern const CGFloat MMNavigationFooterFlexibleWidth;
 
 @end
 
-@interface MMNavigationFooterSpace : NSObject
+@interface MMSnapFooterSpace : NSObject
 
 @property (assign, nonatomic) CGFloat width;
 
