@@ -22,6 +22,7 @@ typedef NS_ENUM(NSUInteger, MMSnapHeaderAction) {
 @property (copy, nonatomic) NSString *backButtonTitle;
 @property (assign, nonatomic) BOOL hidesBackButton;
 @property (assign, nonatomic) MMSnapHeaderAction backButtonAction;
+@property (assign, nonatomic) BOOL displaysLargeTitle;
 
 @property (strong, nonatomic) UIButton *leftButton;
 @property (strong, nonatomic) UIButton *rightButton;
@@ -32,5 +33,13 @@ typedef NS_ENUM(NSUInteger, MMSnapHeaderAction) {
 @property (strong, nonatomic) UIColor *separatorColor UI_APPEARANCE_SELECTOR;
 
 @property (strong, nonatomic) UIView *backgroundView;
+
+// Large titles.
+- (CGSize)sizeThatFits:(CGSize)size withVerticalScrollOffset:(CGFloat)offset;
+
+- (CGFloat)preferredVerticalScrollOffsetForTargetOffset:(CGFloat)targetOffset withVerticalVelocity:(CGFloat)velocity;
+
+// If set to @c YES, animations that relate to scrolling will be enabled.
+@property (assign, nonatomic) BOOL contentIsBeingScrolled;
 
 @end

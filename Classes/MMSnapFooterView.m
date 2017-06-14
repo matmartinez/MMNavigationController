@@ -10,6 +10,7 @@
 
 @interface MMSnapFooterView ()
 
+@property (assign, nonatomic) CGFloat regularHeight;
 @property (strong, nonatomic) UIView *separatorView;
 
 @end
@@ -25,6 +26,7 @@ const CGFloat MMSnapFooterFlexibleWidth = CGFLOAT_MAX;
         self.clipsToBounds = NO;
         
         // Defaults.
+        _regularHeight = 44.0f;
         _separatorColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
         
         // Background view.
@@ -63,6 +65,7 @@ static const NSString *MMSnapFooterInfoSizeKey = @"Size";
     
     static const CGFloat pad = 8.0f;
     static const CGFloat spacing = 8.0f;
+    const CGFloat regularHeight = self.regularHeight;
     
     const CGFloat maximumContentWidth = CGRectGetWidth(bounds) - (pad * 2.0f);
     const CGSize maximumItemSize = CGSizeMake(maximumContentWidth, CGRectGetHeight(bounds));
@@ -138,7 +141,7 @@ static const NSString *MMSnapFooterInfoSizeKey = @"Size";
         
         CGRect rect = (CGRect){
             .origin.x = roundf(contentOffset),
-            .origin.y = roundf((CGRectGetHeight(bounds) - itemSize.height) / 2.0f),
+            .origin.y = roundf((regularHeight - itemSize.height) / 2.0f),
             .size = itemSize
         };
         
@@ -180,7 +183,7 @@ static const NSString *MMSnapFooterInfoSizeKey = @"Size";
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
-    size.height = 44.0f;
+    size.height = self.regularHeight;
     
     return size;
 }
