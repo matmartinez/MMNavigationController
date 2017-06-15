@@ -1042,7 +1042,13 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
             BOOL snaps = (containsPoint && !completelyVisible);
             if (snaps) {
                 if (page != NSNotFound) {
-                    [self scrollToPage:pagesInRect.firstIndex + 1 animated:YES];
+                    NSInteger newPage = page;
+                    
+                    if (newPage != pagesInRect.firstIndex) {
+                        newPage = pagesInRect.firstIndex + 1;
+                    }
+                    
+                    [self scrollToPage:newPage animated:YES];
                 }
                 *stop = YES;
             }
