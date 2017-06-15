@@ -257,10 +257,6 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
         
         BOOL isDisplayingViewAtIndex = (view != nil);
         if (!isDisplayingViewAtIndex) {
-            // Don't animate insertion.
-            [CATransaction begin];
-            //[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
-            
             // Insert view.
             view = [dataSource scrollView:self viewAtPage:page];
             
@@ -293,11 +289,6 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
         // Update separator frame.
         [separatorView setFrame:separatorRect];
         [separatorView setPercentDisappeared:disappearPercent];
-        
-        // Commit view insertion transaction.
-        if (!isDisplayingViewAtIndex) {
-            [CATransaction commit];
-        }
     }];
 }
 
@@ -310,9 +301,12 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     CGPoint contentOffset = self.contentOffset;
     
     // Add parallax offset if:
-    // a. This is not the last page.
-    // b. Page is fading away from the left edge.
-    if (page != (_numberOfPages - 1) && CGRectGetMinX(rect) < contentOffset.x) {
+    // a. This page should be disappearing because of the content offset.
+    // b. This page can completely dissapear.
+    const BOOL isBehindContentOffset = (CGRectGetMinX(rect) < contentOffset.x);
+    const BOOL canDisappear = CGRectGetMaxX(rect) <= self.contentSize.width - CGRectGetWidth(bounds);
+    
+    if (canDisappear && isBehindContentOffset) {
         CGFloat distance = CGRectGetMinX(bounds) - CGRectGetMinX(rect);
         CGFloat maximum = CGRectGetWidth(rect);
         
