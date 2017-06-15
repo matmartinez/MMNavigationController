@@ -19,6 +19,8 @@
         unsigned int showsLargeTitle: 1;
         unsigned int showsHeading: 1;
     } _configurationOptions;
+    
+    CGSize _largeTitleSize;
 }
 
 @property (strong, nonatomic) UILabel *titleLabel;
@@ -71,6 +73,7 @@
         
         // Defaults.
         _separatorColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
+        _largeTitleSize = CGSizeZero;
         
         // Configuration.
         _configurationOptions.showsHeading = YES;
@@ -370,7 +373,9 @@
         const CGFloat regularHeight = self.regularHeight;
         const CGFloat largeHeaderHeight = self.largeHeaderHeight;
         
-        CGSize largeHeaderSize = [self.largeTitleLabel sizeThatFits:contentRect.size];
+        CGSize largeHeaderSize = _largeTitleSize;
+        
+        const BOOL enabled = (largeHeaderSize.width <= CGRectGetWidth(largeContentRect));
         largeHeaderSize.width = MIN(largeHeaderSize.width, CGRectGetWidth(largeContentRect));
         
         CGRect largeHeaderRect = (CGRect){
@@ -395,8 +400,8 @@
         _largeHeaderSeparatorView.frame = largeHeaderSeparatorRect;
         _largeHeaderContainer.frame = largeHeaderContainerRect;
         
-        const BOOL showsLargeTitle = CGRectGetHeight(bounds) > regularHeight;
-        const BOOL showsHeading = CGRectGetHeight(bounds) > regularHeight + (interSpacing * 2.0f);
+        const BOOL showsLargeTitle = (enabled) && (CGRectGetHeight(bounds) > regularHeight);
+        const BOOL showsHeading = (enabled) && (CGRectGetHeight(bounds) > regularHeight + (interSpacing * 2.0f));
         
         if (showsHeading != _configurationOptions.showsHeading) {
             const BOOL animated = (self.window != nil) && self.contentIsBeingScrolled;
@@ -462,7 +467,7 @@
 {
     size.height = self.regularHeight;
     
-    if (self.displaysLargeTitle) {
+    if ([self displaysLargeTitleWithSize:size]) {
         size.height += self.largeHeaderHeight;
     }
     
@@ -569,6 +574,7 @@
         _title = title;
         _titleLabel.text = title;
         _largeTitleLabel.text = title;
+        _largeTitleSize = [_largeTitleLabel sizeThatFits:(CGSize){ CGFLOAT_MAX, CGFLOAT_MAX }];
         
         [self _assignFonts];
         [self setNeedsLayout];
@@ -707,18 +713,33 @@
 
 #pragma mark - Large titles.
 
+- (BOOL)displaysLargeTitleWithSize:(CGSize)size
+{
+    if (self.displaysLargeTitle) {
+        const CGFloat spacing = _barButtonSpacing;
+        const CGFloat allowedWidth = size.width - (spacing * 2.0f);
+        
+        return (_largeTitleSize.width <= allowedWidth);
+    }
+    return NO;
+}
+
 - (CGSize)sizeThatFits:(CGSize)size withVerticalScrollOffset:(CGFloat)offset
 {
     const CGSize preferredSize = [self sizeThatFits:size];
     
-    size.height = MAX(preferredSize.height + (offset * -1.0f), self.regularHeight);
+    if ([self displaysLargeTitleWithSize:size]) {
+        size.height = MAX(preferredSize.height + (offset * -1.0f), self.regularHeight);
+    } else {
+        size.height = preferredSize.height;
+    }
     
     return size;
 }
 
 - (CGFloat)preferredVerticalScrollOffsetForTargetOffset:(CGFloat)offset withVerticalVelocity:(CGFloat)velocity
 {
-    if (self.displaysLargeTitle) {
+    if ([self displaysLargeTitleWithSize:self.bounds.size]) {
         const CGFloat collapsableHeight = self.largeHeaderHeight;
         
         if (offset < collapsableHeight) {
