@@ -187,7 +187,12 @@
     }
     
     _regularBackButton.titleLabel.font = [UIFont systemFontOfSize:headingPointSize];
-    _largeTitleLabel.font = [UIFont systemFontOfSize:largeHeadingPointSize weight:UIFontWeightBold];
+    
+    if ([UIFont respondsToSelector:@selector(systemFontOfSize:weight:)]) {
+        _largeTitleLabel.font = [UIFont systemFontOfSize:largeHeadingPointSize weight:UIFontWeightBold];
+    } else {
+        _largeTitleLabel.font = [UIFont boldSystemFontOfSize:largeHeadingPointSize];
+    }
 }
 
 #pragma mark - Actions.
