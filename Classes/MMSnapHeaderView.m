@@ -44,6 +44,7 @@
 
 @property (assign, nonatomic, readonly) CGFloat regularHeight;
 @property (assign, nonatomic, readonly) CGFloat largeHeaderHeight;
+@property (assign, nonatomic) CGFloat largeHeaderScaleFactor;
 
 @end
 
@@ -70,6 +71,7 @@
         _backButtonSpacing = 8.0f;
         _barButtonSpacing = 8.0f;
         _interSpacing = 5.0;
+        _largeHeaderScaleFactor = 1.0f;
         
         // Defaults.
         _separatorColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
@@ -375,10 +377,12 @@
     if ([self.class _UINavigationBarUsesLargeTitles]) {
         CGRect largeContentRect = UIEdgeInsetsInsetRect(bounds, (UIEdgeInsets){ .left = largeTitleSpacing, .right = largeTitleSpacing });
         
-        const CGFloat regularHeight = self.regularHeight;
-        const CGFloat largeHeaderHeight = self.largeHeaderHeight;
+        const CGFloat regularHeight = _regularHeight;
+        const CGFloat largeHeaderHeight = _largeHeaderHeight;
+        const CGSize calculatedTitleSize = _largeTitleSize;
         
-        CGSize largeHeaderSize = _largeTitleSize;
+        CGSize largeHeaderSize = calculatedTitleSize;
+        largeHeaderSize.width = CGRectGetWidth(largeContentRect);
         
         const BOOL enabled = (largeHeaderSize.width <= CGRectGetWidth(largeContentRect));
         largeHeaderSize.width = MIN(largeHeaderSize.width, CGRectGetWidth(largeContentRect));
@@ -395,7 +399,7 @@
         
         CGRect largeHeaderSeparatorRect = (CGRect){
             .origin.x = CGRectGetMinX(largeHeaderRect),
-            .size.width = CGRectGetWidth(largeHeaderRect),
+            .size.width = calculatedTitleSize.width,
             .size.height = 1.0f
         };
         
@@ -421,6 +425,22 @@
                 animations();
             }
         }
+        
+        CGFloat scale = 1.0f;
+        
+        if (self.contentIsBeingScrolled) {
+            static const CGFloat maginificationThreshold = 74.0f;
+            static const CGFloat headerScaleDelta = 0.1f;
+            static const CGFloat maximumScale = 1.0f + headerScaleDelta;
+            
+            CGFloat maginificationDistance = CGRectGetHeight(bounds) - (regularHeight + largeHeaderHeight);
+            CGFloat percentage = (maginificationDistance / maginificationThreshold);
+            
+            scale = 1.0f + (percentage * headerScaleDelta);
+            scale = MAX(MIN(scale, maximumScale), 1.0f);
+        }
+        
+        self.largeHeaderScaleFactor = scale;
         
         _largeTitleLabel.frame = largeHeaderRect;
         _largeTitleLabel.hidden = !showsLargeTitle;
@@ -695,6 +715,14 @@
         _displaysLargeTitle = displaysLargeTitle;
         
         [self sizeToFit];
+    }
+}
+
+- (void)setLargeHeaderScaleFactor:(CGFloat)scaleFactor
+{
+    if (scaleFactor != _largeHeaderScaleFactor) {
+        _largeHeaderScaleFactor = scaleFactor;
+        _largeTitleLabel.transform = CGAffineTransformMakeScale(scaleFactor, scaleFactor);
     }
 }
 
