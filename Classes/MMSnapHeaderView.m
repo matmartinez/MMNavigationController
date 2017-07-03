@@ -786,16 +786,7 @@
 
 + (CGFloat)_UINavigationBarDoubleEdgesSpacing
 {
-    static CGFloat width;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"11.0")) {
-            width = 25.0f;
-        } else {
-            width = 16.0f;
-        }
-    });
-    return width;
+    return 16.0f;
 }
 
 + (BOOL)_UINavigationBarUsesLargeTitles
