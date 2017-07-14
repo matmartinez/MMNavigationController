@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		097E58641A7836A000BCDA16 /* MMSnapHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 097E58631A7836A000BCDA16 /* MMSnapHeaderView.m */; };
+		097E59C01F196DBA00B511D4 /* MMSnapIndicatorRounded@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 097E59BE1F196DBA00B511D4 /* MMSnapIndicatorRounded@2x.png */; };
+		097E59C11F196DBA00B511D4 /* MMSnapIndicatorRounded@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 097E59BF1F196DBA00B511D4 /* MMSnapIndicatorRounded@3x.png */; };
 		0986F5171A78774A00BBA5FC /* MMSnapFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0986F5161A78774A00BBA5FC /* MMSnapFooterView.m */; };
 		09A1D3231A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 09A1D3221A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png */; };
 		09A1D3251A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 09A1D3241A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png */; };
@@ -34,6 +36,8 @@
 /* Begin PBXFileReference section */
 		097E58621A7836A000BCDA16 /* MMSnapHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSnapHeaderView.h; sourceTree = "<group>"; };
 		097E58631A7836A000BCDA16 /* MMSnapHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSnapHeaderView.m; sourceTree = "<group>"; };
+		097E59BE1F196DBA00B511D4 /* MMSnapIndicatorRounded@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "MMSnapIndicatorRounded@2x.png"; path = "../../../Desktop/MMSnapIndicatorRounded@2x.png"; sourceTree = "<group>"; };
+		097E59BF1F196DBA00B511D4 /* MMSnapIndicatorRounded@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "MMSnapIndicatorRounded@3x.png"; path = "../../../Desktop/MMSnapIndicatorRounded@3x.png"; sourceTree = "<group>"; };
 		0986F5151A78774A00BBA5FC /* MMSnapFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSnapFooterView.h; sourceTree = "<group>"; };
 		0986F5161A78774A00BBA5FC /* MMSnapFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSnapFooterView.m; sourceTree = "<group>"; };
 		09A1D3221A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MMSnapBackIndicatorDefault@2x.png"; sourceTree = "<group>"; };
@@ -81,6 +85,8 @@
 				09A1D3261A8156D0003AD8B0 /* MMSnapBackIndicatorDefault.png */,
 				09A1D3221A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png */,
 				09A1D3241A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png */,
+				097E59BE1F196DBA00B511D4 /* MMSnapIndicatorRounded@2x.png */,
+				097E59BF1F196DBA00B511D4 /* MMSnapIndicatorRounded@3x.png */,
 			);
 			path = Images;
 			sourceTree = SOURCE_ROOT;
@@ -241,8 +247,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				097E59C01F196DBA00B511D4 /* MMSnapIndicatorRounded@2x.png in Resources */,
 				09A1D3271A8156D0003AD8B0 /* MMSnapBackIndicatorDefault.png in Resources */,
 				09A1D3251A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png in Resources */,
+				097E59C11F196DBA00B511D4 /* MMSnapIndicatorRounded@3x.png in Resources */,
 				09A1D3231A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -146,7 +146,13 @@
         UIButton *regularBackButton = [UIButton buttonWithType:UIButtonTypeSystem];
         UIButton *compactBackButton = [UIButton buttonWithType:UIButtonTypeSystem];
         
-        UIImage *backButtonImage = [[UIImage imageNamed:@"MMSnapBackIndicatorDefault.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        UIImage *backButtonImage = nil;
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"11.0")) {
+            backButtonImage = [[UIImage imageNamed:@"MMSnapIndicatorRounded"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        } else {
+            backButtonImage = [[UIImage imageNamed:@"MMSnapBackIndicatorDefault"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        }
+        
         backButtonImage.accessibilityLabel = UIKitLocalizedString(@"Back");
         
         for (UIButton *backButton in @[ regularBackButton, compactBackButton ]) {
