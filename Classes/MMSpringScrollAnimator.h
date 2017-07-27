@@ -1,5 +1,5 @@
 //
-//  MMDecelerationAnimator.h
+//  MMSpringScrollAnimator.h
 //  MMSnapController
 //
 //  Created by Matías Martínez on 2/2/15.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MMDecelerationAnimator : NSObject
+@interface MMSpringScrollAnimator : NSObject
 
 /**
  *  Returns an animator instance configured with the specified scroll view.
@@ -39,7 +39,7 @@
  *
  *  @param contentOffset The content offset at which stop animating.
  */
-- (void)animateScrollToContentOffset:(CGPoint)contentOffset;
+- (void)animateScrollToContentOffset:(CGPoint)contentOffset duration:(NSTimeInterval)duration;
 
 /**
  *  Stops the animation at its current state.
@@ -49,8 +49,30 @@
 - (void)cancelAnimation;
 
 /**
- *  A deceleration rate for the animation.
+  *  The mass of the object attached to the end of the spring. Must be greater than 0.
+  *  Defaults to one.
  */
-@property (assign, nonatomic) CGFloat decelerationRate;
+@property (assign, nonatomic) CGFloat mass;
+
+/**
+ *  The spring stiffness coefficient. Must be greater than 0.
+ *  Defaults to 100.
+ */
+@property (assign, nonatomic) CGFloat stiffness;
+
+/*
+ *  The damping coefficient. Must be greater than or equal to 0.
+ *  Defaults to 10.
+ */
+@property (assign, nonatomic) CGFloat damping;
+
+/*
+ * The initial velocity of the object attached to the spring. Defaults
+ * to zero, which represents an unmoving object. Negative values
+ * represent the object moving away from the spring attachment point,
+ * positive values represent the object moving towards the spring
+ * attachment point.
+ */
+@property (assign, nonatomic) CGFloat initialVelocity;
 
 @end

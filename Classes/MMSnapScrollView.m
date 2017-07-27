@@ -7,7 +7,7 @@
 //
 
 #import "MMSnapScrollView.h"
-#import "MMDecelerationAnimator.h"
+#import "MMSpringScrollAnimator.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface _MMSnapScrollViewDelegateProxy : NSObject
@@ -87,7 +87,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 @property (strong, nonatomic) NSMutableSet *separatorReuseQueue;
 @property (assign, nonatomic) CGFloat separatorClassDefinedWidth;
 
-@property (strong, nonatomic) MMDecelerationAnimator *scrollToAnimator;
+@property (strong, nonatomic) MMSpringScrollAnimator *scrollToAnimator;
 @property (strong, nonatomic) NSMutableSet *viewsToRemoveAfterScrollAnimation;
 
 @end
@@ -139,7 +139,10 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     _updates = [NSMutableDictionary dictionary];
     
     // Custom animator for content offset updates.
-    _scrollToAnimator = [[MMDecelerationAnimator alloc] initWithTargetScrollView:self];
+    _scrollToAnimator = [[MMSpringScrollAnimator alloc] initWithTargetScrollView:self];
+    _scrollToAnimator.mass = 1;
+    _scrollToAnimator.stiffness = 320;
+    _scrollToAnimator.damping = 60;
     _scrollToAnimator.delegate = self;
     
     // Adds a snap to page gesture recognizer.
@@ -510,7 +513,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
             }
             
             if (animated) {
-                [self.scrollToAnimator animateScrollToContentOffset:contentOffset];
+                [self.scrollToAnimator animateScrollToContentOffset:contentOffset duration:0.5f];
             } else {
                 [self setContentOffset:contentOffset];
             }
