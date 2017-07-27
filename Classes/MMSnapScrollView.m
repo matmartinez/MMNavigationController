@@ -141,8 +141,8 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     // Custom animator for content offset updates.
     _scrollToAnimator = [[MMSpringScrollAnimator alloc] initWithTargetScrollView:self];
     _scrollToAnimator.mass = 1;
-    _scrollToAnimator.stiffness = 320;
-    _scrollToAnimator.damping = 60;
+    _scrollToAnimator.stiffness = 280;
+    _scrollToAnimator.damping = 50;
     _scrollToAnimator.delegate = self;
     
     // Adds a snap to page gesture recognizer.
@@ -513,7 +513,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
             }
             
             if (animated) {
-                [self.scrollToAnimator animateScrollToContentOffset:contentOffset duration:0.5f];
+                [self.scrollToAnimator animateScrollToContentOffset:contentOffset duration:0.55];
             } else {
                 [self setContentOffset:contentOffset];
             }
