@@ -64,6 +64,12 @@
     self.headerView.frame = headerRect;
 }
 
+- (void)viewSafeAreaInsetsDidChange
+{
+    [super viewSafeAreaInsetsDidChange];
+    [self.view setNeedsDisplay];
+}
+
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
@@ -145,6 +151,22 @@ static inline void MMDrawLineInContext(CGContextRef ctx, CGPoint a, CGPoint b){
     
     MMDrawLineInContext(ctx, CGPointZero, CGPointMake(CGRectGetMaxX(bounds), CGRectGetMaxY(bounds)));
     MMDrawLineInContext(ctx, CGPointMake(CGRectGetMaxX(bounds), 0), CGPointMake(CGRectGetMinX(bounds), CGRectGetMaxY(bounds)));
+    
+    if (@available(iOS 11.0, *)) {
+        CGContextSetStrokeColorWithColor(ctx, [UIColor greenColor].CGColor);
+        
+        const UIEdgeInsets safeAreaInsets = self.safeAreaInsets;
+        
+        MMDrawLineInContext(ctx, CGPointMake(safeAreaInsets.left, 0), CGPointMake(safeAreaInsets.left, CGRectGetMaxY(bounds)));
+        
+        MMDrawLineInContext(ctx, CGPointMake(CGRectGetMaxX(bounds) - safeAreaInsets.right, 0), CGPointMake(CGRectGetMaxX(bounds) - safeAreaInsets.right, CGRectGetMaxY(bounds)));
+    }
+}
+
+- (void)safeAreaInsetsDidChange
+{
+    [super safeAreaInsetsDidChange];
+    [self setNeedsDisplay];
 }
 
 @end

@@ -158,6 +158,10 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     [self setAlwaysBounceVertical:NO];
     [self setScrollsToTop:NO];
     
+    if (@available(iOS 11.0, *)) {
+        [self setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+    }
+    
     // Don't delay touches.
     [self setDelaysContentTouches:NO];
     
@@ -258,16 +262,12 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
             separatorRect = [self _separatorRectWithReferenceRect:referenceRect];
         }
         
+        // Insert the view if not displaying:
         BOOL isDisplayingViewAtIndex = (view != nil);
         if (!isDisplayingViewAtIndex) {
-            // Insert view.
             view = [dataSource scrollView:self viewAtPage:page];
             
             NSAssert(view != nil, @"view cannot be nil.");
-            
-            if (notifyWillDisplayView) {
-                [delegate scrollView:self willDisplayView:view atPage:page];
-            }
             
             [visibleViewsDictionary setObject:view forKey:key];
             
@@ -276,6 +276,10 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
                 [self insertSubview:view belowSubview:nextView];
             } else {
                 [self addSubview:view];
+            }
+            
+            if (notifyWillDisplayView) {
+                [delegate scrollView:self willDisplayView:view atPage:page];
             }
             
             // Insert separator view.
@@ -1368,3 +1372,4 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
 }
 
 @end
+

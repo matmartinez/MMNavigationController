@@ -8,13 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		097E58641A7836A000BCDA16 /* MMSnapHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 097E58631A7836A000BCDA16 /* MMSnapHeaderView.m */; };
-		097E59C01F196DBA00B511D4 /* MMSnapIndicatorRounded@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 097E59BE1F196DBA00B511D4 /* MMSnapIndicatorRounded@2x.png */; };
-		097E59C11F196DBA00B511D4 /* MMSnapIndicatorRounded@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 097E59BF1F196DBA00B511D4 /* MMSnapIndicatorRounded@3x.png */; };
 		0986F5171A78774A00BBA5FC /* MMSnapFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0986F5161A78774A00BBA5FC /* MMSnapFooterView.m */; };
 		09A1D3231A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 09A1D3221A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png */; };
 		09A1D3251A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 09A1D3241A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png */; };
 		09A1D3271A8156D0003AD8B0 /* MMSnapBackIndicatorDefault.png in Resources */ = {isa = PBXBuildFile; fileRef = 09A1D3261A8156D0003AD8B0 /* MMSnapBackIndicatorDefault.png */; };
-		09BBA87D1A800AFE009634F0 /* MMDecelerationAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 09BBA87C1A800AFE009634F0 /* MMDecelerationAnimator.m */; };
+		09A4488B1F6C3CFB00CB9DD8 /* MMSpringScrollAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A4488A1F6C3CFB00CB9DD8 /* MMSpringScrollAnimator.m */; };
+		09A448991F6C7A9500CB9DD8 /* MMSnapController+MMSafeAreaInsetsWorkaround.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A448981F6C7A9500CB9DD8 /* MMSnapController+MMSafeAreaInsetsWorkaround.m */; };
 		09C9EA9D1A635E77009081BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C9EA9C1A635E77009081BF /* main.m */; };
 		09C9EAA01A635E77009081BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C9EA9F1A635E77009081BF /* AppDelegate.m */; };
 		09C9EAA31A635E77009081BF /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C9EAA21A635E77009081BF /* ViewController.m */; };
@@ -36,15 +35,17 @@
 /* Begin PBXFileReference section */
 		097E58621A7836A000BCDA16 /* MMSnapHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSnapHeaderView.h; sourceTree = "<group>"; };
 		097E58631A7836A000BCDA16 /* MMSnapHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSnapHeaderView.m; sourceTree = "<group>"; };
-		097E59BE1F196DBA00B511D4 /* MMSnapIndicatorRounded@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "MMSnapIndicatorRounded@2x.png"; path = "../../../Desktop/MMSnapIndicatorRounded@2x.png"; sourceTree = "<group>"; };
-		097E59BF1F196DBA00B511D4 /* MMSnapIndicatorRounded@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "MMSnapIndicatorRounded@3x.png"; path = "../../../Desktop/MMSnapIndicatorRounded@3x.png"; sourceTree = "<group>"; };
 		0986F5151A78774A00BBA5FC /* MMSnapFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSnapFooterView.h; sourceTree = "<group>"; };
 		0986F5161A78774A00BBA5FC /* MMSnapFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSnapFooterView.m; sourceTree = "<group>"; };
 		09A1D3221A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MMSnapBackIndicatorDefault@2x.png"; sourceTree = "<group>"; };
 		09A1D3241A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MMSnapBackIndicatorDefault@3x.png"; sourceTree = "<group>"; };
 		09A1D3261A8156D0003AD8B0 /* MMSnapBackIndicatorDefault.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MMSnapBackIndicatorDefault.png; sourceTree = "<group>"; };
-		09BBA87B1A800AFE009634F0 /* MMDecelerationAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMDecelerationAnimator.h; sourceTree = "<group>"; };
-		09BBA87C1A800AFE009634F0 /* MMDecelerationAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMDecelerationAnimator.m; sourceTree = "<group>"; };
+		09A448891F6C3CFB00CB9DD8 /* MMSpringScrollAnimator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMSpringScrollAnimator.h; sourceTree = "<group>"; };
+		09A4488A1F6C3CFB00CB9DD8 /* MMSpringScrollAnimator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMSpringScrollAnimator.m; sourceTree = "<group>"; };
+		09A4488C1F6C3D0D00CB9DD8 /* MMSnapIndicatorRounded@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MMSnapIndicatorRounded@2x.png"; sourceTree = "<group>"; };
+		09A4488D1F6C3D0D00CB9DD8 /* MMSnapIndicatorRounded@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MMSnapIndicatorRounded@3x.png"; sourceTree = "<group>"; };
+		09A448971F6C7A9500CB9DD8 /* MMSnapController+MMSafeAreaInsetsWorkaround.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MMSnapController+MMSafeAreaInsetsWorkaround.h"; sourceTree = "<group>"; };
+		09A448981F6C7A9500CB9DD8 /* MMSnapController+MMSafeAreaInsetsWorkaround.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MMSnapController+MMSafeAreaInsetsWorkaround.m"; sourceTree = "<group>"; };
 		09C9EA971A635E77009081BF /* MMSnapController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MMSnapController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09C9EA9B1A635E77009081BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		09C9EA9C1A635E77009081BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -85,8 +86,8 @@
 				09A1D3261A8156D0003AD8B0 /* MMSnapBackIndicatorDefault.png */,
 				09A1D3221A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png */,
 				09A1D3241A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png */,
-				097E59BE1F196DBA00B511D4 /* MMSnapIndicatorRounded@2x.png */,
-				097E59BF1F196DBA00B511D4 /* MMSnapIndicatorRounded@3x.png */,
+				09A4488C1F6C3D0D00CB9DD8 /* MMSnapIndicatorRounded@2x.png */,
+				09A4488D1F6C3D0D00CB9DD8 /* MMSnapIndicatorRounded@3x.png */,
 			);
 			path = Images;
 			sourceTree = SOURCE_ROOT;
@@ -156,12 +157,14 @@
 				09C9EAC11A635F0A009081BF /* MMSnapController.m */,
 				09C9EAC31A636514009081BF /* MMSnapScrollView.h */,
 				09C9EAC41A636514009081BF /* MMSnapScrollView.m */,
-				09BBA87B1A800AFE009634F0 /* MMDecelerationAnimator.h */,
-				09BBA87C1A800AFE009634F0 /* MMDecelerationAnimator.m */,
 				097E58621A7836A000BCDA16 /* MMSnapHeaderView.h */,
 				097E58631A7836A000BCDA16 /* MMSnapHeaderView.m */,
 				0986F5151A78774A00BBA5FC /* MMSnapFooterView.h */,
 				0986F5161A78774A00BBA5FC /* MMSnapFooterView.m */,
+				09A448891F6C3CFB00CB9DD8 /* MMSpringScrollAnimator.h */,
+				09A4488A1F6C3CFB00CB9DD8 /* MMSpringScrollAnimator.m */,
+				09A448971F6C7A9500CB9DD8 /* MMSnapController+MMSafeAreaInsetsWorkaround.h */,
+				09A448981F6C7A9500CB9DD8 /* MMSnapController+MMSafeAreaInsetsWorkaround.m */,
 			);
 			path = Classes;
 			sourceTree = SOURCE_ROOT;
@@ -247,10 +250,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				097E59C01F196DBA00B511D4 /* MMSnapIndicatorRounded@2x.png in Resources */,
 				09A1D3271A8156D0003AD8B0 /* MMSnapBackIndicatorDefault.png in Resources */,
 				09A1D3251A81563F003AD8B0 /* MMSnapBackIndicatorDefault@3x.png in Resources */,
-				097E59C11F196DBA00B511D4 /* MMSnapIndicatorRounded@3x.png in Resources */,
 				09A1D3231A81555E003AD8B0 /* MMSnapBackIndicatorDefault@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -270,9 +271,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				09C9EAA31A635E77009081BF /* ViewController.m in Sources */,
+				09A448991F6C7A9500CB9DD8 /* MMSnapController+MMSafeAreaInsetsWorkaround.m in Sources */,
 				0986F5171A78774A00BBA5FC /* MMSnapFooterView.m in Sources */,
+				09A4488B1F6C3CFB00CB9DD8 /* MMSpringScrollAnimator.m in Sources */,
 				09C9EAC21A635F0A009081BF /* MMSnapController.m in Sources */,
-				09BBA87D1A800AFE009634F0 /* MMDecelerationAnimator.m in Sources */,
 				09C9EAC51A636514009081BF /* MMSnapScrollView.m in Sources */,
 				09C9EAA01A635E77009081BF /* AppDelegate.m in Sources */,
 				09C9EA9D1A635E77009081BF /* main.m in Sources */,

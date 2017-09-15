@@ -63,8 +63,16 @@ static const NSString *MMSnapFooterInfoSizeKey = @"Size";
         .size = self.bounds.size
     };
     
-    static const CGFloat pad = 8.0f;
-    static const CGFloat spacing = 8.0f;
+    const CGFloat spacing = 8.0f;
+    
+    CGFloat pad = 8.0f;
+    
+    if (@available(iOS 11.0, *)) {
+        const CGFloat inset = MAX(self.safeAreaInsets.left, self.safeAreaInsets.right);
+        
+        pad += inset;
+    }
+    
     const CGFloat regularHeight = self.regularHeight;
     
     const CGFloat maximumContentWidth = CGRectGetWidth(bounds) - (pad * 2.0f);
@@ -292,3 +300,4 @@ static const NSString *MMSnapFooterInfoSizeKey = @"Size";
 }
 
 @end
+

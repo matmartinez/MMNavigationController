@@ -231,18 +231,26 @@
 {
     [super layoutSubviews];
     
-    const CGRect bounds = (CGRect){ .size = self.bounds.size };
+    const CGRect bounds = (CGRect){
+        .size = self.bounds.size
+    };
     
-    const CGFloat backEdgeSpacing = _backButtonSpacing;
-    const CGFloat interSpacing = _interSpacing;
-    
+    CGFloat interSpacing = _interSpacing;
     CGFloat largeTitleSpacing = _barButtonSpacing;
     CGFloat edgeSpacing = _barButtonSpacing;
+    CGFloat backEdgeSpacing = _backButtonSpacing;
     
     if ([self.class _UINavigationBarDoubleEdgesRequired]) {
         if (CGRectGetWidth(bounds) > [self.class _UINavigationBarDoubleEdgesThreshold]) {
             edgeSpacing = [self.class _UINavigationBarDoubleEdgesSpacing];
         }
+    }
+    
+    if (@available(iOS 11.0, *)) {
+        const CGFloat inset = MAX(self.safeAreaInsets.left, self.safeAreaInsets.right);
+        
+        edgeSpacing += inset;
+        backEdgeSpacing += inset;
     }
     
     // Rects to calculate.
@@ -462,8 +470,10 @@
         .size.height = 1.0f / [UIScreen mainScreen].scale,
     };
     
+    CGRect statusBarRect = [self convertRect:[UIApplication sharedApplication].statusBarFrame fromView:nil];
+    
     CGRect backgroundRect = UIEdgeInsetsInsetRect(bounds, (UIEdgeInsets){
-        .top = -20.0f
+        .top = MIN(CGRectGetMinY(statusBarRect), 0),
     });
     
     // Apply computed properties.
@@ -758,7 +768,15 @@
         const CGFloat spacing = _barButtonSpacing;
         const CGFloat allowedWidth = size.width - (spacing * 2.0f);
         
-        return (_largeTitleSize.width <= allowedWidth);
+        if (_largeTitleSize.width > allowedWidth) {
+            return NO;
+        }
+        
+        if (size.width > [self.class _UINavigationBarLargeTitlesThreshold]) {
+            return NO;
+        }
+        
+        return YES;
     }
     return NO;
 }
@@ -838,6 +856,11 @@
     return use;
 }
 
++ (CGFloat)_UINavigationBarLargeTitlesThreshold
+{
+    return 400.0f;
+}
+
 @end
 
 @implementation _MMSnapHeaderContainerView
@@ -862,3 +885,4 @@
 }
 
 @end
+
