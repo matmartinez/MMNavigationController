@@ -245,13 +245,15 @@
             edgeSpacing = [self.class _UINavigationBarDoubleEdgesSpacing];
         }
     }
-    
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
     if (@available(iOS 11.0, *)) {
         const CGFloat inset = MAX(self.safeAreaInsets.left, self.safeAreaInsets.right);
         
         edgeSpacing += inset;
         backEdgeSpacing += inset;
     }
+#endif
     
     // Rects to calculate.
     UIView *actualLeftButton = nil;

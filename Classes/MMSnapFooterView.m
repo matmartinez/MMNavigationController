@@ -66,12 +66,13 @@ static const NSString *MMSnapFooterInfoSizeKey = @"Size";
     const CGFloat spacing = 8.0f;
     
     CGFloat pad = 8.0f;
-    
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
     if (@available(iOS 11.0, *)) {
         const CGFloat inset = MAX(self.safeAreaInsets.left, self.safeAreaInsets.right);
-        
         pad += inset;
     }
+#endif
     
     const CGFloat regularHeight = self.regularHeight;
     

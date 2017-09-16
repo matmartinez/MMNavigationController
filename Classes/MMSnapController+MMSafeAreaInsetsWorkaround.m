@@ -30,14 +30,15 @@
 
 - (UIEdgeInsets)MM_safeAreaInsetsForChildViewController:(UIViewController *)childViewController insetsAreAbsolute:(BOOL *)absolute
 {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
     if (@available(iOS 11.0, *)) {
         if (absolute) {
             *absolute = YES;
         }
         return self.view.safeAreaInsets;
-    } else {
-        return UIEdgeInsetsZero;
     }
+#endif
+    return UIEdgeInsetsZero;
 }
 
 @end

@@ -158,9 +158,11 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     [self setAlwaysBounceVertical:NO];
     [self setScrollsToTop:NO];
     
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
     if (@available(iOS 11.0, *)) {
         [self setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
     }
+#endif
     
     // Don't delay touches.
     [self setDelaysContentTouches:NO];
