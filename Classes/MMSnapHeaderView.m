@@ -517,6 +517,15 @@
     return size;
 }
 
+- (void)didMoveToWindow
+{
+    [super didMoveToWindow];
+    
+    if (self.window != nil) {
+        [self setNeedsLayout];
+    }
+}
+
 #pragma mark - Updates.
 
 - (void)snapControllerWillDisplayViewController
