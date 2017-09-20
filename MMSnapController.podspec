@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "MMSnapController"
-  s.version      = "0.2.3"
+  s.version      = "0.2.4"
   s.summary      = "A heavily interactive, responsive and beautiful navigation interface."
   s.homepage     = "http://www.matmartinez.net/"
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
