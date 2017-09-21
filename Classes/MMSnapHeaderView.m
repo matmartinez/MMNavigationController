@@ -508,11 +508,13 @@
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
-    size.height = self.regularHeight;
+    CGFloat height = self.regularHeight;
     
     if ([self displaysLargeTitleWithSize:size]) {
-        size.height += self.largeHeaderHeight;
+        height += self.largeHeaderHeight;
     }
+    
+    size.height = height;
     
     return size;
 }
@@ -783,7 +785,7 @@
             return NO;
         }
         
-        if (size.width > [self.class _UINavigationBarLargeTitlesThreshold]) {
+        if (size.height < [self.class _UINavigationBarLargeTitlesHeightThreshold]) {
             return NO;
         }
         
@@ -867,9 +869,9 @@
     return use;
 }
 
-+ (CGFloat)_UINavigationBarLargeTitlesThreshold
++ (CGFloat)_UINavigationBarLargeTitlesHeightThreshold
 {
-    return 400.0f;
+    return 420.0f;
 }
 
 @end
@@ -896,4 +898,3 @@
 }
 
 @end
-
