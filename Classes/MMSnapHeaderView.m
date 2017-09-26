@@ -809,7 +809,7 @@
 
 - (CGFloat)preferredVerticalScrollOffsetForTargetOffset:(CGFloat)offset withVerticalVelocity:(CGFloat)velocity
 {
-    if ([self displaysLargeTitleWithSize:self.bounds.size]) {
+    if (_configurationOptions.showsLargeTitle) {
         const CGFloat collapsableHeight = self.largeHeaderHeight;
         
         if (offset < collapsableHeight) {
