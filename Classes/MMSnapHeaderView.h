@@ -39,6 +39,8 @@ typedef NS_ENUM(NSUInteger, MMSnapHeaderAction) {
 
 - (CGFloat)preferredVerticalScrollOffsetForTargetOffset:(CGFloat)targetOffset withVerticalVelocity:(CGFloat)velocity;
 
+- (BOOL)displaysLargeTitleWithSize:(CGSize)size;
+
 // If set to @c YES, animations that relate to scrolling will be enabled.
 @property (assign, nonatomic) BOOL contentIsBeingScrolled;
 
