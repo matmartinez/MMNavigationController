@@ -11,19 +11,27 @@
 
 @implementation MMSnapController (MMSafeAreaInsetsWorkaround)
 
+NS_INLINE void MMSnapOverrideInstanceMethod(Class aClass, SEL overrideSelector, SEL withSelector){
+    Method workaroundMethod = class_getInstanceMethod(aClass, withSelector);
+    IMP workaroundImplementation = method_getImplementation(workaroundMethod);
+    
+    class_addMethod(aClass, overrideSelector, workaroundImplementation, method_getTypeEncoding(workaroundMethod));
+};
+
 + (void)load
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         const BOOL requiresWorkaround = ([UIView instancesRespondToSelector:@selector(safeAreaInsets)]);
+        
         if (requiresWorkaround) {
-            NSString *overrideSelectorString = [@[ @"_edgeI", @"nsetsForChildView", @"Controller:insetsAreA", @"bsolute:" ] componentsJoinedByString:@""];
-            SEL overrideSelector = NSSelectorFromString(overrideSelectorString);
+            NSString *safeAreaForChildOverrideSelectorString = [@[ @"_edgeI", @"nsetsForChildView", @"Controller:insetsAreA", @"bsolute:" ] componentsJoinedByString:@""];
             
-            Method workaroundMethod = class_getInstanceMethod(self, @selector(MM_safeAreaInsetsForChildViewController:insetsAreAbsolute:));
-            IMP workaroundImplementation = method_getImplementation(workaroundMethod);
+            MMSnapOverrideInstanceMethod(self, NSSelectorFromString(safeAreaForChildOverrideSelectorString), @selector(MM_safeAreaInsetsForChildViewController:insetsAreAbsolute:));
             
-            class_addMethod(self, overrideSelector, workaroundImplementation, method_getTypeEncoding(workaroundMethod));
+            NSString *marginForChildOverrideSelectorString = [@[ @"_marginI", @"nfoForChild:lef", @"tMargin:righ" , @"tMargin:" ] componentsJoinedByString:@""];
+            
+            MMSnapOverrideInstanceMethod(self, NSSelectorFromString(marginForChildOverrideSelectorString), @selector(MM_marginForChildViewController:leftMargin:rightMargin:));
         }
     });
 }
@@ -32,13 +40,20 @@
 {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
     if (@available(iOS 11.0, *)) {
-        if (absolute) {
-            *absolute = YES;
+        if (self.scrollMode == MMSnapScrollModePaging) {
+            if (absolute) {
+                *absolute = YES;
+            }
+            return self.view.safeAreaInsets;
         }
-        return self.view.safeAreaInsets;
     }
 #endif
     return UIEdgeInsetsZero;
+}
+
+- (void)MM_marginForChildViewController:(UIViewController *)childViewController leftMargin:(inout CGFloat *)left rightMargin:(inout CGFloat *)right
+{
+    
 }
 
 @end

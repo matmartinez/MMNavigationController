@@ -64,20 +64,20 @@ static const NSString *MMSnapFooterInfoSizeKey = @"Size";
     };
     
     const CGFloat spacing = 8.0f;
+    UIEdgeInsets contentInset = (UIEdgeInsets){ .left = 8.0f, .right = 8.0f };
     
-    CGFloat pad = 8.0f;
-
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
     if (@available(iOS 11.0, *)) {
-        const CGFloat inset = MAX(self.safeAreaInsets.left, self.safeAreaInsets.right);
-        pad += inset;
+        contentInset.left += self.safeAreaInsets.left;
+        contentInset.right += self.safeAreaInsets.right;
     }
 #endif
     
+    const CGRect contentRect = UIEdgeInsetsInsetRect(bounds, contentInset);
     const CGFloat regularHeight = self.regularHeight;
     
-    const CGFloat maximumContentWidth = CGRectGetWidth(bounds) - (pad * 2.0f);
-    const CGSize maximumItemSize = CGSizeMake(maximumContentWidth, CGRectGetHeight(bounds));
+    const CGFloat maximumContentWidth = CGRectGetWidth(contentRect);
+    const CGSize maximumItemSize = contentRect.size;
     
     CGFloat contentWidth = 0.0f;
     NSUInteger flexibleItemsCount = 0;
@@ -134,7 +134,7 @@ static const NSString *MMSnapFooterInfoSizeKey = @"Size";
     }
     
     // Layout.
-    CGFloat contentOffset = pad;
+    CGFloat contentOffset = CGRectGetMinX(contentRect);
     
     for (NSDictionary *info in itemsToLayout) {
         id item = info[MMSnapFooterInfoObjectKey];

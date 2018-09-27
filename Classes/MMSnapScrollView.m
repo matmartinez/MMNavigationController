@@ -908,6 +908,14 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
     }
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    id <MMSnapScrollViewDelegate> delegate = self.delegate;
+    if ([delegate respondsToSelector:@selector(scrollViewDidScroll:)]) {
+        [delegate scrollViewDidScroll:scrollView];
+    }
+}
+
 #pragma mark - Scrolling behavior.
 
 - (void)_notifySnapToTargetContentOffset:(CGPoint)targetContentOffset completed:(BOOL)completed

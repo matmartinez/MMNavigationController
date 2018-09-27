@@ -245,15 +245,6 @@
             edgeSpacing = [self.class _UINavigationBarDoubleEdgesSpacing];
         }
     }
-
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
-    if (@available(iOS 11.0, *)) {
-        const CGFloat inset = MAX(self.safeAreaInsets.left, self.safeAreaInsets.right);
-        
-        edgeSpacing += inset;
-        backEdgeSpacing += inset;
-    }
-#endif
     
     // Rects to calculate.
     UIView *actualLeftButton = nil;
@@ -275,6 +266,13 @@
     } else {
         contentInset = (UIEdgeInsets){ .left = edgeSpacing, .right = edgeSpacing };
     }
+    
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+    if (@available(iOS 11.0, *)) {
+        contentInset.left += self.safeAreaInsets.left;
+        contentInset.right += self.safeAreaInsets.right;
+    }
+#endif
     
     const CGRect contentRect = ({
         CGRect rect = UIEdgeInsetsInsetRect(bounds, contentInset);
@@ -363,7 +361,7 @@
         };
         
         if (((NSInteger)(CGRectGetWidth(bounds) - sizeNeededToFitTitle.width) / 2.0f) > CGRectGetMinX(titleAlignmentRect)) {
-            titleViewRect.origin.x = ceilf((CGRectGetWidth(bounds) - CGRectGetWidth(titleViewRect)) / 2.0f);
+            titleViewRect.origin.x = ceilf(CGRectGetMidX(contentRect) - CGRectGetWidth(titleViewRect) / 2.0f);
         } else {
             titleViewRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect));
         }
@@ -380,13 +378,8 @@
             .size.height = sSize.height
         };
         
-        if (((NSInteger)(CGRectGetWidth(bounds) - sizeNeededToFitTitle.width) / 2.0f) > CGRectGetMinX(titleAlignmentRect)) {
-            titleLabelRect.origin.x = ceilf((CGRectGetWidth(bounds) - CGRectGetWidth(titleLabelRect)) / 2.0f);
-            subtitleLabelRect.origin.x = ceilf((CGRectGetWidth(bounds) - CGRectGetWidth(subtitleLabelRect)) / 2.0f);
-        } else {
-            titleLabelRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect) + ((sizeNeededToFitTitle.width - tSize.width) / 2.0f));
-            subtitleLabelRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect) + ((sizeNeededToFitTitle.width - sSize.width) / 2.0f));
-        }
+        titleLabelRect.origin.x = ceilf(CGRectGetMidX(titleAlignmentRect) - CGRectGetWidth(titleLabelRect) / 2.0f);
+        subtitleLabelRect.origin.x = ceilf(CGRectGetMidX(titleAlignmentRect) - CGRectGetWidth(subtitleLabelRect) / 2.0f);
     }
     
     // Large heading.

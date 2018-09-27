@@ -410,7 +410,16 @@ typedef NS_ENUM(NSUInteger, MMSnapViewType) {
                 userInterfaceIdiom = UI_USER_INTERFACE_IDIOM();
             }
             
-            const CGFloat compactWidth = userInterfaceIdiom == UIUserInterfaceIdiomPad ? 320.0f : 295.0f;
+            CGFloat compactWidth = 320.0f;
+            
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+            if (@available(iOS 11.0, *)) {
+                const UIEdgeInsets safeAreaInsets = self.view.safeAreaInsets;
+                const CGFloat estimatedMargin = MAX(safeAreaInsets.left, safeAreaInsets.right);
+                
+                compactWidth += estimatedMargin;
+            }
+#endif
             
             if (metrics == MMViewControllerMetricsCompact) {
                 return compactWidth;
@@ -490,6 +499,28 @@ typedef NS_ENUM(NSUInteger, MMSnapViewType) {
     UIViewController *viewController = [self _viewControllerAtPage:page];
     if (_delegateFlags.delegateDidSnapViewController) {
         [self.delegate snapController:self didSnapToViewController:viewController];
+    }
+}
+
+#pragma mark - Scroll view delegate.
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    static BOOL invalidateSafeAreaInvocationNeeded;
+    static SEL invalidateSafeAreaSelector;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSString *invalidateSafeAreaSelectorString = [@[ @"_updateCont", @"entOverlayInsetsF", @"orSelfAndChildren" ] componentsJoinedByString:@""];
+        
+        invalidateSafeAreaSelector = NSSelectorFromString(invalidateSafeAreaSelectorString);
+        invalidateSafeAreaInvocationNeeded = [self respondsToSelector:invalidateSafeAreaSelector];
+    });
+    
+    if (invalidateSafeAreaInvocationNeeded) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        [self performSelector:invalidateSafeAreaSelector];
+#pragma clang diagnostic pop
     }
 }
 
