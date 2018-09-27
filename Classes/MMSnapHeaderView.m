@@ -574,7 +574,7 @@
         BOOL animated = self.window != nil;
         if (animated) {
             [UIView animateWithDuration:0.5f delay:0 usingSpringWithDamping:0.9f initialSpringVelocity:1.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
-                _compactBackButton.transform = t;
+                self->_compactBackButton.transform = t;
             } completion:NULL];
         } else {
             _compactBackButton.transform = t;

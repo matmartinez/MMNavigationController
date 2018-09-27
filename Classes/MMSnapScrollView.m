@@ -253,7 +253,7 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
         UIView *view = [visibleViewsDictionary objectForKey:key];
         UIView <MMSnapViewSeparatorView> *separatorView = [visibleSeparatorsDictionary objectForKey:key];
         
-        BOOL showsSeparator = ((page + 1) < _numberOfPages);
+        BOOL showsSeparator = ((page + 1) < self->_numberOfPages);
         
         CGFloat disappearPercent = 0.0f;
         CGRect rect = [self _rectForViewAtPage:page disappearPercent:&disappearPercent];
@@ -646,9 +646,9 @@ static const CGFloat _MMStockSnapViewSeparatorWidth = 10.0f;
         
         NSMutableDictionary *dict = nil;
         if ([category isEqualToString:_MMElementCategoryPage]) {
-            dict = _visibleViewsDictionary;
+            dict = self->_visibleViewsDictionary;
         } else if ([category isEqualToString:_MMElementCategorySeparator]) {
-            dict = _visibleSeparatorsDictionary;
+            dict = self->_visibleSeparatorsDictionary;
         } else {
             [[NSException exceptionWithName:NSInternalInconsistencyException reason:[NSString stringWithFormat:@"Invalid element category named `%@`", category] userInfo:nil] raise];
         }

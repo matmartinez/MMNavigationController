@@ -98,7 +98,7 @@ typedef NS_ENUM(NSUInteger, MMSnapViewType) {
     NSIndexSet *insertedIndexes = [viewControllers indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
         UIViewController *vc = obj;
         
-        return ![_viewControllers containsObject:vc];
+        return ![self->_viewControllers containsObject:vc];
     }];
     
     NSArray *inserted = [viewControllers objectsAtIndexes:insertedIndexes];
