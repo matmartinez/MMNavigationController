@@ -66,7 +66,7 @@
         self.clipsToBounds = NO;
         
         // Metrics.
-        _regularHeight = 44.0f;
+        _regularHeight = self.class._UINavigationBarDefaultHeight;
         _largeHeaderHeight = 52.0f;
         _backButtonSpacing = 8.0f;
         _barButtonSpacing = 8.0f;
@@ -865,6 +865,19 @@
 + (CGFloat)_UINavigationBarLargeTitlesHeightThreshold
 {
     return 420.0f;
+}
+
++ (CGFloat)_UINavigationBarDefaultHeight
+{
+    static CGFloat height;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        const BOOL modernBars = (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"12.0"));
+        const BOOL userInterfaceIdiomPad = (UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad);
+        
+        height = (modernBars && userInterfaceIdiomPad) ? 50.0f : 44.0f;
+    });
+    return height;
 }
 
 @end

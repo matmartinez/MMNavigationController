@@ -17,6 +17,9 @@
 
 const CGFloat MMSnapFooterFlexibleWidth = CGFLOAT_MAX;
 
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v) \
+([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+
 @implementation MMSnapFooterView
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -26,7 +29,7 @@ const CGFloat MMSnapFooterFlexibleWidth = CGFLOAT_MAX;
         self.clipsToBounds = NO;
         
         // Defaults.
-        _regularHeight = 44.0f;
+        _regularHeight = self.class._UIToolbarDefaultHeight;
         _separatorColor = [UIColor colorWithWhite:0.0f alpha:0.2f];
         
         // Background view.
@@ -285,6 +288,21 @@ static const NSString *MMSnapFooterInfoSizeKey = @"Size";
         }
     }
     return hitTest;
+}
+
+#pragma mark - Metrics.
+
++ (CGFloat)_UIToolbarDefaultHeight
+{
+    static CGFloat height;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        const BOOL modernBars = (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"12.0"));
+        const BOOL userInterfaceIdiomPad = (UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad);
+        
+        height = (modernBars && userInterfaceIdiomPad) ? 50.0f : 44.0f;
+    });
+    return height;
 }
 
 @end
