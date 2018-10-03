@@ -260,12 +260,11 @@
     BOOL usesMultilineHeading = _configurationOptions.usingMultilineHeading;
     BOOL usesCustomTitleView = _titleView != nil;
     
-    UIEdgeInsets contentInset;
-    if (showsBackButton) {
-        contentInset = (UIEdgeInsets){ .left = backEdgeSpacing, .right = edgeSpacing };
-    } else {
-        contentInset = (UIEdgeInsets){ .left = edgeSpacing, .right = edgeSpacing };
-    }
+    UIEdgeInsets barButtonsInsets = (UIEdgeInsets){
+        .left = (showsBackButton ? backEdgeSpacing : edgeSpacing), .right = edgeSpacing
+    };
+    
+    UIEdgeInsets contentInset = UIEdgeInsetsZero;
     
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
     if (@available(iOS 11.0, *)) {
@@ -275,7 +274,11 @@
 #endif
     
     const CGRect contentRect = ({
-        CGRect rect = UIEdgeInsetsInsetRect(bounds, contentInset);
+        UIEdgeInsets insets = contentInset;
+        insets.left += barButtonsInsets.left;
+        insets.right += barButtonsInsets.right;
+        
+        CGRect rect = UIEdgeInsetsInsetRect(bounds, insets);
         rect.size.height = self.regularHeight;
         rect;
     });
@@ -353,6 +356,8 @@
     CGRect subtitleLabelRect = CGRectZero;
     CGRect titleViewRect = CGRectZero;
     
+    CGFloat horizontalAlignDimension = 0.0f;
+    
     if (usesCustomTitleView) {
         titleViewRect = (CGRect){
             .origin.y = ceilf((CGRectGetMidY(contentRect) - (titleAlignmentHeight / 2.0f))),
@@ -360,11 +365,7 @@
             .size.height = sizeNeededToFitTitle.height
         };
         
-        if (((NSInteger)(CGRectGetWidth(bounds) - sizeNeededToFitTitle.width) / 2.0f) > CGRectGetMinX(titleAlignmentRect)) {
-            titleViewRect.origin.x = ceilf(CGRectGetMidX(contentRect) - CGRectGetWidth(titleViewRect) / 2.0f);
-        } else {
-            titleViewRect.origin.x = ceilf(CGRectGetMinX(titleAlignmentRect));
-        }
+        horizontalAlignDimension = CGRectGetWidth(titleViewRect);
     } else {
         titleLabelRect = (CGRect){
             .origin.y = ceilf(CGRectGetMidY(contentRect) - (titleAlignmentHeight / 2.0f)),
@@ -378,9 +379,21 @@
             .size.height = sSize.height
         };
         
-        titleLabelRect.origin.x = ceilf(CGRectGetMidX(titleAlignmentRect) - CGRectGetWidth(titleLabelRect) / 2.0f);
-        subtitleLabelRect.origin.x = ceilf(CGRectGetMidX(titleAlignmentRect) - CGRectGetWidth(subtitleLabelRect) / 2.0f);
+        horizontalAlignDimension = MAX(CGRectGetWidth(titleLabelRect), CGRectGetWidth(subtitleLabelRect));
     }
+    
+    const CGRect boundsInsetRect = UIEdgeInsetsInsetRect(bounds, contentInset);
+    const CGFloat offsetBoundsRectCentered = (CGRectGetMidX(boundsInsetRect) - (horizontalAlignDimension / 2.0f));
+    const BOOL canCenterOnContentRect = CGRectGetMinX(titleAlignmentRect) < offsetBoundsRectCentered;
+    
+    CGRect horizontalAlignmentRect = titleAlignmentRect;
+    if (canCenterOnContentRect) {
+        horizontalAlignmentRect = boundsInsetRect;
+    }
+    
+    titleLabelRect.origin.x = ceilf(CGRectGetMidX(horizontalAlignmentRect) - (CGRectGetWidth(titleLabelRect) / 2.0f));
+    subtitleLabelRect.origin.x = ceilf(CGRectGetMidX(horizontalAlignmentRect) - (CGRectGetWidth(subtitleLabelRect) / 2.0f));
+    titleViewRect.origin.x = ceilf(CGRectGetMidX(horizontalAlignmentRect) - (CGRectGetWidth(titleViewRect) / 2.0f));
     
     // Large heading.
     if ([self.class _UINavigationBarUsesLargeTitles]) {
